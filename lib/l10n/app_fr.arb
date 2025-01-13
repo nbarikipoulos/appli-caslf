@@ -1,0 +1,133 @@
+{
+  "location": "{location, select, ground{terrain} gymnasium{gymnase} other{---}}",
+  "location_status": "{status, select, open{ouvert} close{fermé} other{---}}",
+
+  "location_no_access": "Vous n'avez pas d'accés; votre demande devra être confirmée",
+
+  "user_type": "{type, select, beginner{débutant(e)} confirmed{confirmé(e)} former{ancien} other{---} }",
+
+  "time_slot_status": "{status, select, notOk{ko} ok{ok} awaiting{en attente de confirmation} accepted{accepté} other{---} }",
+  "time_slot_type": "{type, select, common{normal} event{événement} maintenance{travaux} closed{fermeture} other{---} }",
+  "time_slot_from_to": "de {start} à {to}",
+  "created_by": "Créé par {user}",
+  "accepted_by": "Accepté par {user}",
+
+  "ok" : "OK",
+
+  "confirm": "confirmer",
+  "delete": "supprimer",
+
+  "open": "ouvrir",
+  "close": "fermé",
+
+  "start": "début",
+  "end": "fin",
+  "day": "jour",
+  "days": "jours",
+  "time": "heure",
+  "duration": "durée",
+  "all_day": "journée entière",
+  "today": "aujourd'hui",
+  "tomorrow": "demain",
+  "day_type":  "{day, select, today{aujourd'hui} tomorrow{demain} other{un autre jour} }",
+  "day_short":  "{day, select, monday{lun.} tuesday{mar.} wednesday{mer.} thursday{jeu.} friday{ven.} saturday{sam.} sunday{dim.} other{---} }",
+  "day_long":  "{day, select, monday{lundi} tuesday{mardi} wednesday{mercredi} thursday{jeudi} friday{vendredi} saturday{samedi} sunday{dimanche} other{---} }",
+
+
+  "nothing": "Rien!",
+
+  "where": "où",
+  "type": "type",
+  "when": "quand?",
+  "misc": "misc.",
+
+  "start_end_days_inverted": "Les jours de début/fin sont inversés!",
+  "select_at_least_one_day" : "Sélectionnez au moins un jour",
+  "start_time_expired": "L'heure de debut est passée!",
+  "duration_is_zero": "Durée de 0 minute!",
+  "conflict_in_timeSlot": "Conflit de {start} à {to}",
+  "add_comment_event": "Rentrez un descriptif",
+
+  "news" : "infos",
+
+  "nav_bar_time_slot": "Créneaux",
+  "nav_bar_news": "Info",
+  "nav_bar_settings": "Préférences",
+
+  "check_email": "Verifiez vos courriels pour valider votre compte.",
+
+  "screen_reset_password_title": "Initialiser le mot de passe",
+  "screen_reset_password_send": "Envoyer",
+  "screen_reset_password_mail_send": "Un courriel avec un lien de réinitiliasition vous a été envoyé à {email}",
+
+  "screen_create_title": "Créer un créneau",
+  "screen_create_recurrent_switch" : "Créer des créneaux récurrents",
+  "screen_create_switch_comment_text": "Saisir un commentaire",
+  "screen_create_switch_comment_text_opt": "Saisir un commentaire (optionnel)",
+  "screen_create_switch_do_not_notify": "Ne pas notifier",
+  "screen_create_switch_auto_open_close": "Ouvrir/Fermer automatiquement",
+  "screen_create_switch_all_day": "Toute la journée",
+  "screen_create_switch_perform": "Ajouter",
+
+  "screen_quick_create_open_title": "Ouvrir Immédiatement",
+  "screen_quick_create_open_where": "Quel Lieu?",
+  "screen_quick_create_open_how_long": "Combien de temps?",
+  "screen_quick_create_open_perform": "Ouvrir",
+
+  "screen_settings_item_user": "Archer",
+  "screen_settings_item_appearance": "Apparences",
+  "screen_settings_item_notification": "Notifications",
+  "screen_settings_item_default": "Valeurs par défaut",
+  "screen_settings_item_admin": "Administration",
+  "screen_settings_item_about": "À propos",
+
+  "screen_admin_title": "Réglages avancés",
+  "screen_admin_item_admin_title": "Mode administrateur",
+  "screen_admin_item_admin_subtitle": "Agir sur TOUS les créneaux",
+  "screen_admin_item_board_title": "Mode CASLF",
+  "screen_admin_item_board_subtitle": "Créer des créneaux, infos au nom de compagnie",
+  "screen_admin_item_recurrent_title": "Créer des créneaux récurrents",
+  "screen_admin_item_recurrent_subtitle": "Permettre la création de créneaux récurrents",
+  "screen_admin_item_time_limit_title": "Plus de limite de temps",
+  "screen_admin_item_time_limit_subtitle": "Ne limite plus l'affichage des créneaux au mois suivant",
+
+  "screen_appearance_title": "Apparences",
+  "theme_mode": "{mode, select, system{Système} light{Clair} dark{Sombre} other{---} }",
+
+  "screen_notification_title" : "Notifications",
+  "screen_notification_allow_notifications" : "Autoriser les notifications",
+  "screen_notification_new_slot": "s'abonner aux créations de créneaux",
+  "screen_notification_open_close": "s'abonner aux ouvertures/fermetures",
+  "screen_notification_ask_for": "s'abonner aux demandes de créneaux",
+  "screen_notification_news": "s'abonner aux nouvelles",
+
+  "screen_default_title": "Valeurs par défaut",
+
+  "screen_user_title": "Archer",
+  "screen_user_canOpen_label": "Vous pouvez ouvrir:",
+  "screen_user_type_label": "Vous êtes:",
+  "screen_user_type_dummy_the": "le",
+
+  "screen_about_title": "À propos",
+  "screen_about_version": "Version:",
+  "screen_about_build": "Numéro de build:",
+  "screen_about_authorization": "Notification:",
+  "screen_about_fcm_token": "Jeton FCM:",
+  "screen_about_advanced_mode": "Mode avancé",
+
+  "advanced_mode_activate": "Activer le mode avancé",
+  "use_alternative_channels": "Utiliser des canaux alternatifs",
+
+  "message_open_close_title": "{location} {status}",
+  "message_open_body": "Séance prévue jusqu'à {to}.",
+  "message_close_body": "Que rajouter de plus comme information pertinente?",
+
+  "message_new_timeslot_title": "Nouveau créneau au {location}",
+  "message_new_timeslot_body": "{date} de {hour_begin} à {hour_end}.",
+
+  "message_new_timeslots_title": "Nouveaux créneaux au {location}",
+  "message_new_timeslots_body": "Les {days} du {date_begin} au {date_end} de {hour_begin} à {hour_end}.",
+
+  "message_ask_new_timeslot_title": "Demande de créneau au {location}",
+  "message_ask_new_timeslot_body": "{date} de {hour_begin} à {hour_end}."
+}

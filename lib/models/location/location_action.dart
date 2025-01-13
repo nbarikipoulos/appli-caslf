@@ -1,0 +1,4 @@
+enum LocationAction {
+  open,
+  close
+}

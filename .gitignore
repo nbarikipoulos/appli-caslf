@@ -1,0 +1,23 @@
+# Flutter
+.dart_tool/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+public/
+
+# Firebase
+.firebase/
+.firebaserc
+firebase.json
+lib/firebase/firebase_options.dart
+android/app/google-services.json
+
+# IntelliJ/Android Studio
+.idea
+*.iml
+
+# VSC
+.vscode/
+
+# misc.
+.DS_Store
