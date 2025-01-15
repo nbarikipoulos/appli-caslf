@@ -32,6 +32,8 @@ class _AboutPageState extends State<AboutPage> {
   late int count;
   Timer? _timer;
 
+  final bool isWeb = ApplicationService().isWebApp;
+
   @override
   void initState() {
     super.initState();
@@ -120,25 +122,27 @@ class _AboutPageState extends State<AboutPage> {
                       )
                     ].map((item) => f(item.left, item.right))
                       .expand((i) => i).toList(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 32.0),
-                          child: Text(
-                            overflow: TextOverflow.clip,
-                            tr(context)!.screen_about_fcm_token
+                    if (isWeb) ...[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 32.0),
+                            child: Text(
+                              overflow: TextOverflow.clip,
+                              tr(context)!.screen_about_fcm_token
+                            ),
                           ),
-                        ),
-                        Flexible(
-                          child: Text(
-                            fcmToken ?? '---',
-                            overflow: TextOverflow.clip
-                          ),
-                        )
-                      ]
-                    ),
-                    const Divider(),
+                          Flexible(
+                            child: Text(
+                              fcmToken ?? '---',
+                              overflow: TextOverflow.clip
+                            ),
+                          )
+                        ]
+                      ),
+                      const Divider()
+                    ],
                     if (isAdvancedMode || _showExtra) ...[
                       const SizedBox(height: 16.0),
                       HeadingItem(
