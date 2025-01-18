@@ -72,7 +72,7 @@ class SettingsPage extends StatelessWidget {
             _createGroup(context, ['user']),
             _createGroup(context, ['appearance' /*, 'defaults' */]),
             _createGroup(context, ['notifications']),
-            user.grant!.isAdmin ? _createAdminAndCoGroup(context) : null,
+            _createAdminAndCoGroup(context),
             _createGroup(context, ['about']),
           ].nonNulls.toList(),
         )
@@ -80,38 +80,46 @@ class SettingsPage extends StatelessWidget {
     )
   );
 
-  Widget _createAdminAndCoGroup(BuildContext context) {
+  Widget? _createAdminAndCoGroup(BuildContext context) {
     List<Widget> children = [];
 
+    final bool canBeAdmin = user.grant!.isAdmin;
+
     // To admin page
-
-    children.add(_createNavEntry(context, prefEntries['admin']!));
-
-    children.add(const Divider(color: primary));
+    if (canBeAdmin) {
+      children.add(_createNavEntry(context, prefEntries['admin']!));
+    }
 
     // Act as club mode.
+    if (user.grant!.canActAsClub) {
+      AdminService adminService = context.watch<AdminService>();
 
-    AdminService adminService = context.watch<AdminService>();
+      if (canBeAdmin) { // Add separator
+        children.add(const Divider(color: primary));
+      }
 
-    children.add(
-      SwitchListTile(
-        title: Text(
-          tr(context)!.screen_settings_admin_item_board_title
+      children.add(
+        SwitchListTile(
+            title: Text(
+                tr(context)!.screen_settings_admin_item_board_title
+            ),
+            subtitle: Text(
+                tr(context)!.screen_settings_admin_item_board_subtitle
+            ),
+            value: adminService.actAsClub,
+            onChanged: (bool value) {
+              adminService.actAsClub = value;
+            },
+            secondary: const Icon(Icons.pets)
         ),
-        subtitle: Text(
-           tr(context)!.screen_settings_admin_item_board_subtitle
-        ),
-        value: adminService.actAsClub,
-        onChanged: (bool value) {
-          adminService.actAsClub = value;
-        },
-        secondary: const Icon(Icons.pets)
-      ),
-    );
-
-    return Card(
-      child: Column(children: children)
-    );
+      );
+    }
+    return children.isNotEmpty
+      ? Card(
+        child: Column(children: children)
+      )
+      : null
+    ;
   }
 
   Widget _createGroup(BuildContext context, List<String> entries) {
