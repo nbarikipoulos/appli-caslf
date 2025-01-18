@@ -2,6 +2,7 @@ import 'package:caslf/constants.dart';
 import 'package:caslf/models/location/location.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/models/user/user_data.dart';
+import 'package:caslf/models/user/user_grant.dart';
 import 'package:caslf/models/user/user_type.dart';
 import 'package:caslf/services/admin_service.dart';
 import 'package:caslf/services/service.dart';
@@ -17,18 +18,18 @@ class GrantService implements Service {
   //
 
   // Aka can access to the create TS pages
-  bool get canAddTimeSlot => switch(_user.type) {
+  bool get canAddTimeSlot => switch(_userGrant.type) {
     UserType.confirmed || UserType.guest => true,
     _ => false
   } || actAsClub;
 
   // Aka can at last update the db! "Ceinture et Bretelles"
-  bool get canReallyAddTimeSlot => _user.type == UserType.confirmed;
+  bool get canReallyAddTimeSlot => _userGrant.type == UserType.confirmed;
 
   bool get allowRecurrentTimeSlot => adminService.allowRecurrentTimeSlot;
 
-  bool canDeleteTimeSlot(TimeSlot timeSlot) => 
-    _user.type != UserType.guest 
+  bool canDeleteTimeSlot(TimeSlot timeSlot) =>
+    _userGrant.type != UserType.guest
     && (
       timeSlot.ownerId == _user.uid
       || (
@@ -56,12 +57,13 @@ class GrantService implements Service {
   // Manage 'guest' user
   //
 
-  bool get isAllowedToSendNotification => switch(_user.type) {
+  bool get isAllowedToSendNotification => switch(_userGrant.type) {
     UserType.beginner || UserType.confirmed => true,
     _ => false
   };
 
   UserData get _user => UserService().current;
+  UserGrant get _userGrant => _user.grant!;
 
   @override
   Future<void> clear() async {

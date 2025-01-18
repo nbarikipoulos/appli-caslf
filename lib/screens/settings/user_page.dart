@@ -1,5 +1,6 @@
 import 'package:caslf/models/location/location.dart';
 import 'package:caslf/models/user/user_data.dart';
+import 'package:caslf/models/user/user_type.dart';
 import 'package:caslf/services/service.dart';
 import 'package:caslf/services/user_service.dart';
 import 'package:caslf/utils/string_utils.dart';
@@ -18,7 +19,8 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
-  UserData user = UserService().current;
+  final UserData user = UserService().current;
+  late final UserType type = user.grant!.type;
 
   @override
   Widget build(BuildContext context) {
@@ -52,11 +54,11 @@ class _UserPageState extends State<UserPage> {
                   ),
                   ListTile(
                     leading: Icon(
-                      user.type.icon,
-                      color: user.type.color
+                      type.icon,
+                      color: type.color
                     ),
                     title: Text(
-                      tr(context)!.user_type(user.type.name),
+                      tr(context)!.user_type(type.name),
                     ),
                   ),
                   Text(
