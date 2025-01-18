@@ -1,3 +1,4 @@
+import 'package:caslf/constants.dart';
 import 'package:caslf/models/location/location.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/models/user/user_data.dart';
@@ -29,7 +30,12 @@ class GrantService implements Service {
   bool canDeleteTimeSlot(TimeSlot timeSlot) => 
     _user.type != UserType.guest 
     && (
-      timeSlot.ownerId == _user.uid || adminService.isAdminMode
+      timeSlot.ownerId == _user.uid
+      || (
+        timeSlot.ownerId == clubId &&
+        actAsClub
+      )
+      || adminService.isAdminMode
     )
   ;
 
