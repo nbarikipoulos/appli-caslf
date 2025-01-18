@@ -40,19 +40,6 @@ class _AdminPageState extends State<AdminPage> {
                 secondary: const Icon(Icons.lock_open)
               ),
               SwitchListTile(
-                title: Text(
-                  tr(context)!.screen_admin_item_board_title
-                ),
-                subtitle: Text(
-                  tr(context)!.screen_admin_item_board_subtitle
-                ),
-                value: adminService.actAsClub,
-                onChanged: (bool value) {
-                  adminService.actAsClub = value;
-                },
-                secondary: const Icon(Icons.pets)
-              ),
-              SwitchListTile(
                   title: Text(
                     tr(context)!.screen_admin_item_recurrent_title
                   ),

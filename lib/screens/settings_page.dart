@@ -1,7 +1,11 @@
 import 'package:caslf/router/app_router.dart';
+import 'package:caslf/services/admin_service.dart';
 import 'package:caslf/services/user_service.dart';
+import 'package:caslf/theme/theme_utils.dart'
+  show primary;
 import 'package:caslf/widgets/localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 final router = NavigationHelper().router;
 
@@ -64,41 +68,75 @@ class SettingsPage extends StatelessWidget {
         child :Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: _getGroups().map(
-            (group) => _createGroup(context, group)
-          ).toList(),
+          children: [
+            _createGroup(context, ['user']),
+            _createGroup(context, ['appearance' /*, 'defaults' */]),
+            _createGroup(context, ['notifications']),
+            user.grant!.isAdmin ? _createAdminAndCoGroup(context) : null,
+            _createGroup(context, ['about']),
+          ].nonNulls.toList(),
         )
       )
     )
-  )
-;
+  );
 
-  Iterable<List<String>> _getGroups() => [
-    ['user'],
-    ['appearance' /*, 'defaults' */],
-    ['notifications'],
-    user.grant!.isAdmin ? ['admin'] : null,
-    ['about']
-  ].nonNulls;
+  Widget _createAdminAndCoGroup(BuildContext context) {
+    List<Widget> children = [];
+
+    // To admin page
+
+    children.add(_createNavEntry(context, prefEntries['admin']!));
+
+    children.add(const Divider(color: primary));
+
+    // Act as club mode.
+
+    AdminService adminService = context.watch<AdminService>();
+
+    children.add(
+      SwitchListTile(
+        title: Text(
+          tr(context)!.screen_settings_admin_item_board_title
+        ),
+        subtitle: Text(
+           tr(context)!.screen_settings_admin_item_board_subtitle
+        ),
+        value: adminService.actAsClub,
+        onChanged: (bool value) {
+          adminService.actAsClub = value;
+        },
+        secondary: const Icon(Icons.pets)
+      ),
+    );
+
+    return Card(
+      child: Column(children: children)
+    );
+  }
 
   Widget _createGroup(BuildContext context, List<String> entries) {
     var prefs = entries.map((entry) => prefEntries[entry]!);
 
     return Card(
-        child: Column(
-          children: prefs.map((elt) => InkWell(
-            onTap: () { router.goNamed(elt.route); },
-            child: ListTile(
-              leading: Icon(elt.icon),
-              iconColor: elt.color,
-              title: Text(
-                _getLabel(context, elt.labelKey)
-              )
-            ),
-          )).toList()
-        )
+      child: Column(
+        children: prefs.map((elt) => _createNavEntry(context, elt)).toList()
+      )
     );
   }
+
+  Widget _createNavEntry(
+    BuildContext context,
+    PrefEntry elt
+  ) => InkWell(
+    onTap: () { router.goNamed(elt.route); },
+    child: ListTile(
+      leading: Icon(elt.icon, color: elt.color),
+      title: Text(
+        _getLabel(context, elt.labelKey)
+      ),
+      trailing: const Icon(Icons.chevron_right),
+    ),
+  );
 
   // FIXME Arf.....
   String _getLabel(BuildContext context, String key) {
@@ -114,5 +152,3 @@ class SettingsPage extends StatelessWidget {
   }
 
 }
-
-
