@@ -4,7 +4,7 @@
 
   "location_no_access": "Vous n'avez pas d'accés; votre demande devra être confirmée",
 
-  "user_type": "{type, select, beginner{débutant(e)} confirmed{confirmé(e)} former{ancien} other{---} }",
+  "user_type": "{type, select, beginner{débutant(e)} confirmed{confirmé(e)} former{ancien} guest{visiteur} other{---} }",
 
   "time_slot_status": "{status, select, notOk{ko} ok{ok} awaiting{en attente de confirmation} accepted{accepté} other{---} }",
   "time_slot_type": "{type, select, common{normal} event{événement} maintenance{travaux} closed{fermeture} other{---} }",
@@ -129,5 +129,7 @@
   "message_new_timeslots_body": "Les {days} du {date_begin} au {date_end} de {hour_begin} à {hour_end}.",
 
   "message_ask_new_timeslot_title": "Demande de créneau au {location}",
-  "message_ask_new_timeslot_body": "{date} de {hour_begin} à {hour_end}."
+  "message_ask_new_timeslot_body": "{date} de {hour_begin} à {hour_end}.",
+
+  "guest_message_timeslot" : "Vous êtes connecté en tant qu'invité: Le créneau ne sera pas créé."
 }

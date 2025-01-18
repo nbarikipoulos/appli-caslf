@@ -25,6 +25,7 @@ class MessagesService extends ChangeNotifier implements Service {
   final Map<Channel, bool?> _subscriptions = {};
 
   final _user = UserService().current;
+  final _grantService = GrantService(adminService: AdminService());
 
   final _db = FirebaseFirestore.instance;
   final _fcmInitService = FcmInitService();
@@ -49,16 +50,25 @@ class MessagesService extends ChangeNotifier implements Service {
   }
 
   Future<void> send(Message message) async {
-    Message msg = _useAlternativeChannels ?
-      message.copyWith(
+    // Mainly to ensure that 'guest' can not send any message/notification.
+    // See GrantService.
+    if (!_grantService.isAllowedToSendNotification) {
+      // Early Exit
+      return Future.value();
+    }
+
+    Message msg = _useAlternativeChannels
+      ? message.copyWith(
         channelId: '${_prefix}_${message.channelId}',
-        title: '[${_prefix.toUpperCase()}] ${message.title}'
-    ) : message;
+        title: '[${_prefix.toUpperCase()}] ${message.title}')
+      : message
+    ;
 
     return _db
       .collection(_collectionMsgId)
       .doc()
-      .set(msg.toFirestore());
+      .set(msg.toFirestore())
+    ;
   }
 
   bool? getSubscribingFor(Channel channel) {
@@ -102,8 +112,8 @@ class MessagesService extends ChangeNotifier implements Service {
       ;
     } else {
       _webUpdateTopic(
-          channel: channel,
-          action: ChannelAction.subscribe
+        channel: channel,
+        action: ChannelAction.subscribe
       ).catchError(
         (err) { result = false; }
       );
@@ -149,15 +159,13 @@ class MessagesService extends ChangeNotifier implements Service {
       ;
     } on StateError catch (_) { query = null; }
 
-    print('query ${query != null}');
-
     return query != null
       ? _db // Update document
           .collection(_collectionChannelAuthId)
           .doc(query.id)
           .update({
             'fcm': _fcmInitService.fcmToken,
-            'action' : action.name,
+            'action': action.name,
             'status': 'todo'
           })
       : _db // Create a new document
@@ -167,7 +175,7 @@ class MessagesService extends ChangeNotifier implements Service {
             'uid': _user.uid,
             'fcm': _fcmInitService.fcmToken,
             'channel_id': channel.id,
-            'action' : action.name,
+            'action': action.name,
             'status': 'todo'
           })
     ;
@@ -231,7 +239,6 @@ class MessagesService extends ChangeNotifier implements Service {
   }
 
   Future<void> initSubscriptions(bool shouldInitializeValue) async {
-
     _useAlternativeChannels = await _asyncPrefs.getBool(_altChannelPrefId)
       ?? false //aka default
     ;
@@ -272,7 +279,7 @@ class MessagesService extends ChangeNotifier implements Service {
   }
 
   @override
-  Future clear () async {
+  Future clear() async {
     // Shut notifications at logout down....
     // Get Channels
     var channels = _subscriptions.keys.toList(); // getAllowedChannels();
@@ -285,8 +292,7 @@ class MessagesService extends ChangeNotifier implements Service {
       }
     }
 
-   // Clean-up map
+    // Clean-up map
     _subscriptions.clear();
   }
-
 }

@@ -14,6 +14,7 @@ import 'package:caslf/theme/theme_utils.dart'
   show primary;
 import 'package:caslf/utils/date_utils.dart';
 import 'package:caslf/utils/day.dart';
+import 'package:caslf/utils/misc_utils.dart';
 import 'package:caslf/utils/string_utils.dart';
 import 'package:caslf/utils/time_slot_utils.dart';
 import 'package:caslf/widgets/heading_item.dart';
@@ -296,18 +297,33 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState?.save();
 
-                      // Main job
-                      await _doOnPressed(context);
+                      // aka 'guest' case
+                      bool shouldBeAdded = context
+                        .read<GrantService>()
+                        .canReallyAddTimeSlot
+                      ;
+
+                      if (shouldBeAdded) {
+                        // Main job
+                        await _doOnPressed(context);
+                      } else {
+                        await showSimpleAlertDialog(
+                          context,
+                          tr(context)!.guest_message_timeslot
+                        );
+                      }
 
                       // Back
-                      context.pop();
+                      if (context.mounted) {
+                        context.pop();
+                      }
                     }
                   }
-                ),
-              ],
-            ),
+                )
+              ]
+            )
           )
-        ),
+        )
       )
     );
   }
@@ -386,5 +402,6 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
       duration: duration
     );
   }
+
 }
 

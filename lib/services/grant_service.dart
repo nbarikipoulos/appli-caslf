@@ -15,26 +15,45 @@ class GrantService implements Service {
   // All available grants below
   //
 
-  bool get canAddTimeSlot => _user.type == UserType.confirmed;
+  // Aka can access to the create TS pages
+  bool get canAddTimeSlot => switch(_user.type) {
+    UserType.confirmed || UserType.guest => true,
+    _ => false
+  } || actAsClub;
+
+  // Aka can at last update the db! "Ceinture et Bretelles"
+  bool get canReallyAddTimeSlot => _user.type == UserType.confirmed;
 
   bool get allowRecurrentTimeSlot => adminService.allowRecurrentTimeSlot;
 
-  bool canDeleteTimeSlot(TimeSlot timeSlot) => timeSlot.ownerId == _user.uid
-    || adminService.isAdminMode
+  bool canDeleteTimeSlot(TimeSlot timeSlot) => 
+    _user.type != UserType.guest 
+    && (
+      timeSlot.ownerId == _user.uid || adminService.isAdminMode
+    )
   ;
 
-  bool get canNotNotify => adminService.isAdminMode || adminService.actAsClub;
+  bool get canNotNotify => adminService.isAdminMode || actAsClub;
 
-  bool get canChangeTimeSlotType => adminService.actAsClub;
+  bool get canChangeTimeSlotType => actAsClub;
 
-  bool get canActivateAutoOpen => adminService.actAsClub;
+  bool get canActivateAutoOpen => actAsClub;
 
   bool get actAsClub => adminService.actAsClub;
 
   bool hasAccessTo(Location location) => _user.hasAccessTo(location)
-    || adminService.actAsClub
+    || actAsClub
     || adminService.isAdminMode
   ;
+
+  //
+  // Manage 'guest' user
+  //
+
+  bool get isAllowedToSendNotification => switch(_user.type) {
+    UserType.beginner || UserType.confirmed => true,
+    _ => false
+  };
 
   UserData get _user => UserService().current;
 

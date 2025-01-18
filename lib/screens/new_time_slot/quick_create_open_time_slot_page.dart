@@ -4,6 +4,7 @@ import 'package:caslf/models/message/message.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/models/time_slot/time_slot_status.dart';
 import 'package:caslf/services/admin_service.dart';
+import 'package:caslf/services/grant_service.dart';
 import 'package:caslf/services/location_status_service.dart';
 import 'package:caslf/services/messages_service.dart';
 import 'package:caslf/services/time_service.dart';
@@ -12,6 +13,7 @@ import 'package:caslf/services/user_service.dart';
 import 'package:caslf/theme/theme_utils.dart'
   show primary;
 import 'package:caslf/utils/date_utils.dart';
+import 'package:caslf/utils/misc_utils.dart';
 import 'package:caslf/utils/string_utils.dart';
 import 'package:caslf/utils/time_slot_utils.dart';
 import 'package:caslf/utils/time_utils.dart';
@@ -22,6 +24,7 @@ import 'package:caslf/widgets/time/duration_form_field.dart';
 import 'package:caslf/widgets/time_slot/create/where_form.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class QuickCreateOpenTimeSlotPage extends StatefulWidget {
   const QuickCreateOpenTimeSlotPage({super.key});
@@ -138,18 +141,33 @@ class QuickCreateOpenTimeSlotPageState extends State<QuickCreateOpenTimeSlotPage
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState?.save();
 
-                      // Main job
-                      await _doOnPressed(context);
+                      // aka 'guest' case
+                      bool shouldBeAdded = context
+                        .read<GrantService>()
+                        .canReallyAddTimeSlot
+                      ;
+
+                      if (shouldBeAdded) {
+                        // Main job
+                        await _doOnPressed(context);
+                      } else {
+                        await showSimpleAlertDialog(
+                          context,
+                          tr(context)!.guest_message_timeslot
+                        );
+                      }
 
                       // Back
-                      context.pop();
+                      if (context.mounted) {
+                        context.pop();
+                      }
                     }
                   }
-                ),
-              ],
-            ),
+                )
+              ]
+            )
           )
-        ),
+        )
       )
     );
   }
@@ -170,9 +188,10 @@ class QuickCreateOpenTimeSlotPageState extends State<QuickCreateOpenTimeSlotPage
     ;
   }
 
-  _getLocations() => AdminService().isAdminMode
+  List<Location> _getLocations() => AdminService().isAdminMode
     ? Location.values
-    : user.grant?.accesses;
+    : user.grant?.accesses ?? []
+  ;
 
 }
 
