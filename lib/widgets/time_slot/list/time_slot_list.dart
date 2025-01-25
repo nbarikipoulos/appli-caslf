@@ -63,6 +63,7 @@ class _TimeSlotListViewState extends State<TimeSlotListView> {
         : Container(
             margin: const EdgeInsets.only(left: 8.0, right: 8.0),
             child: ListView.builder(
+              addAutomaticKeepAlives: true,
               itemCount: items.length,
               itemBuilder: (_, index) {
                 final item = items[index];

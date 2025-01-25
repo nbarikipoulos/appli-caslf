@@ -6,6 +6,7 @@ import 'package:caslf/services/time_slot_service.dart';
 import 'package:caslf/services/user_service.dart';
 import 'package:caslf/utils/time_slot_utils.dart';
 import 'package:caslf/widgets/localization.dart';
+import 'package:caslf/widgets/time_slot/list/keep_alive.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -28,7 +29,7 @@ class DetailsPart extends StatelessWidget {
     selector(String id) => (BuildContext context, UserService service) => 
       service.userSync(id)?.displayName;
 
-    return FutureBuilder(
+    return KeepAliveFutureBuilder(
       future: _init(),
       builder: (context, AsyncSnapshot snapshot) {
         return snapshot.connectionState != ConnectionState.done
