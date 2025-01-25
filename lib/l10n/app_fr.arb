@@ -120,7 +120,7 @@
 
   "message_open_close_title": "{location} {status}",
   "message_open_body": "Séance prévue jusqu'à {to}.",
-  "message_close_body": "Que rajouter de plus comme information pertinente?",
+  "message_close_body": ":'(",
 
   "message_new_timeslot_title": "Nouveau créneau au {location}",
   "message_new_timeslot_body": "{date} de {hour_begin} à {hour_end}.",
