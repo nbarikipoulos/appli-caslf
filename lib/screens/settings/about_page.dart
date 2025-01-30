@@ -60,103 +60,100 @@ class _AboutPageState extends State<AboutPage> {
     ];
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            tr(context)!.screen_about_title
-          ),
+      appBar: AppBar(
+        title: Text(
+          tr(context)!.screen_about_title
         ),
-        body: SafeArea(
-          child: Center(
-            child: FutureBuilder(
-            future: _future,
-            builder: (context, AsyncSnapshot snapshot) =>
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: snapshot.connectionState != ConnectionState.done
-                ? const CircularProgressIndicator()
-                : Column(
-                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    HeadingItem(
-                      title: appName!.toUpperCase(),
-                      //style: Theme.of(context).textTheme.headlineSmall
-                    ),
-                    const SizedBox(height: 32.0),
-                      InkWell(
-                        hoverColor: Colors.transparent,
-                        mouseCursor: SystemMouseCursors.basic,
-                        onTap: () {
-                          if(isAdvancedMode) { // Early exit
-                            return;
-                          }
-                          _timer ??= Timer(
-                            const Duration(seconds: 30),
-                            () { setState(() {
-                              if (context.mounted) count = 0;});
-                            }
-                          );
-
-                          setState(() {
-                            count++;
-                            if (count == 7) {
-                              _timer?.cancel();
-                              _timer = null;
-                              count = 0;
-                              _showExtra = !_showExtra;
-                            }
-                          });
-                        },
-                        child: Column(
-                          children: f(
-                            tr(context)!.screen_about_version,
-                            version!
-                          )
-                        )
-                      ),
-                    ...[(
-                        left: tr(context)!.screen_about_build,
-                        right: buildNumber!
-                      ), (
-                        left: tr(context)!.screen_about_authorization,
-                        right: authStatus!.name
-                      )
-                    ].map((item) => f(item.left, item.right))
-                      .expand((i) => i).toList(),
-                    if (isWeb) ...[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 32.0),
-                            child: Text(
-                              overflow: TextOverflow.clip,
-                              tr(context)!.screen_about_fcm_token
-                            ),
-                          ),
-                          Flexible(
-                            child: Text(
-                              fcmToken ?? '---',
-                              overflow: TextOverflow.clip
-                            ),
-                          )
-                        ]
-                      ),
-                      const Divider()
-                    ],
-                    if (isAdvancedMode || _showExtra) ...[
-                      const SizedBox(height: 16.0),
-                      HeadingItem(
-                        title: tr(context)!.screen_about_advanced_mode
-                      ),
-                      const SizedBox(height: 16.0),
-                      const AdvancedMode()
-                    ]
-                  ],
+      ),
+      body: SafeArea(
+        child: FutureBuilder(
+          future: _future,
+          builder: (context, AsyncSnapshot snapshot) => SingleChildScrollView(
+            padding: const EdgeInsets.all(8.0),
+            child: snapshot.connectionState != ConnectionState.done
+            ? const CircularProgressIndicator()
+            : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                HeadingItem(
+                  title: appName!.toUpperCase(),
+                  //style: Theme.of(context).textTheme.headlineSmall
                 ),
-              )
-            )
-          ),
-        )
+                const SizedBox(height: 32.0),
+                InkWell(
+                  hoverColor: Colors.transparent,
+                  mouseCursor: SystemMouseCursors.basic,
+                  onTap: () {
+                    if(isAdvancedMode) { // Early exit
+                      return;
+                    }
+                    _timer ??= Timer(
+                      const Duration(seconds: 30),
+                      () { setState(() {
+                        if (context.mounted) count = 0;});
+                      }
+                    );
+
+                    setState(() {
+                      count++;
+                      if (count == 7) {
+                        _timer?.cancel();
+                        _timer = null;
+                        count = 0;
+                        _showExtra = !_showExtra;
+                      }
+                    });
+                  },
+                  child: Column(
+                    children: f(
+                      tr(context)!.screen_about_version,
+                      version!
+                    )
+                  )
+                ),
+                ...[(
+                  left: tr(context)!.screen_about_build,
+                  right: buildNumber!
+                ), (
+                  left: tr(context)!.screen_about_authorization,
+                  right: authStatus!.name
+                )
+                ].map((item) => f(item.left, item.right))
+                  .expand((i) => i).toList(),
+                if (isWeb) ...[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 32.0),
+                        child: Text(
+                          overflow: TextOverflow.clip,
+                            tr(context)!.screen_about_fcm_token
+                        ),
+                      ),
+                      Flexible(
+                        child: Text(
+                          fcmToken ?? '---',
+                          overflow: TextOverflow.clip
+                        ),
+                      )
+                    ]
+                  ),
+                  const Divider()
+                ],
+                if (isAdvancedMode || _showExtra) ...[
+                  const SizedBox(height: 16.0),
+                  HeadingItem(
+                    title: tr(context)!.screen_about_advanced_mode
+                  ),
+                  const SizedBox(height: 16.0),
+                  const AdvancedMode()
+                ]
+              ],
+            ),
+          )
+        ),
+      )
     );
   }
 

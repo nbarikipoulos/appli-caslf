@@ -63,8 +63,8 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
     body: SafeArea(
-      child: Container(
-        margin: const EdgeInsets.only(left: 8, right: 8, top:8),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.only(left: 8, right: 8, top: 12),
         child :Wrap(
           spacing: 8,
           runSpacing: 8,

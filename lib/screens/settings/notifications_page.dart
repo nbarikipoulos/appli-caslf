@@ -33,7 +33,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
           ),
         ),
         body: SafeArea(
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
