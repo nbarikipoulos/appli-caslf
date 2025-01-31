@@ -2,6 +2,7 @@ import 'package:caslf/constants.dart';
 import 'package:caslf/models/location/location.dart';
 import 'package:caslf/models/message/message.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
+import 'package:caslf/models/time_slot/time_slot_extra.dart';
 import 'package:caslf/models/time_slot/time_slot_status.dart';
 import 'package:caslf/models/time_slot/time_slot_type.dart';
 import 'package:caslf/services/admin_service.dart';
@@ -60,6 +61,8 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
   TimeSlot get defaultTimeSlot => TimeSlot(
     ownerId: user.uid,
     location: Location.ground,
+    type: TimeSlotType.common,
+    extra: {},
     date: TimeService().next,
     duration: const Duration(hours: 2),
     isAllDay: false,
@@ -114,7 +117,12 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
     // Init values next to change
     if (!canNotNotify) { doNotNotify = false; }
     if (!isRecurrentAllowed) { recurrent = false; }
-    if (!canChangeType) { current.type = TimeSlotType.common; }
+    if (!actAsClub) {
+      current.type = TimeSlotType.common;
+      current.extra?.add(TimeSlotExtra.casual);
+    } else {
+      current.extra?.remove(TimeSlotExtra.casual);
+    }
     if (!canActivateAutoOpen) { current.autoOpen = false; }
 
     return Scaffold(

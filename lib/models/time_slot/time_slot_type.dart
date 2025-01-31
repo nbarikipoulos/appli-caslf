@@ -3,7 +3,7 @@ import 'package:caslf/theme/theme_utils.dart'
 import 'package:flutter/material.dart';
 
 enum TimeSlotType {
-  common(icon: Icons.done, color: primary),
+  common(icon: Icons.schedule, color: primary),
   event(icon: Icons.celebration, color: Colors.pinkAccent),
   maintenance(icon: Icons.construction, color: Colors.brown),
   closed(icon: Icons.block, color: Colors.red);

@@ -2,7 +2,9 @@ import 'package:caslf/models/location/location.dart';
 import 'package:caslf/models/location/location_action.dart';
 import 'package:caslf/models/message/message.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
+import 'package:caslf/models/time_slot/time_slot_extra.dart';
 import 'package:caslf/models/time_slot/time_slot_status.dart';
+import 'package:caslf/models/time_slot/time_slot_type.dart';
 import 'package:caslf/services/admin_service.dart';
 import 'package:caslf/services/grant_service.dart';
 import 'package:caslf/services/location_status_service.dart';
@@ -46,6 +48,8 @@ class QuickCreateOpenTimeSlotPageState extends State<QuickCreateOpenTimeSlotPage
   TimeSlot get defaultTimeSlot => TimeSlot(
     ownerId: user.uid,
     location: Location.ground,
+    type: TimeSlotType.common,
+    extra: { TimeSlotExtra.casual },
     date: Precision.adjustDate(TimeService().now),
     duration: const Duration(hours: 2),
     status: TimeSlotStatus.ok

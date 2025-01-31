@@ -1,6 +1,8 @@
 import 'package:caslf/models/location/location.dart';
+import 'package:caslf/models/time_slot/time_slot_extra.dart';
 import 'package:caslf/models/time_slot/time_slot_status.dart';
 import 'package:caslf/models/time_slot/time_slot_type.dart';
+import 'package:caslf/utils/other.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TimeSlot implements Comparable<TimeSlot> {
@@ -8,6 +10,7 @@ class TimeSlot implements Comparable<TimeSlot> {
   String ownerId;
   Location location;
   TimeSlotType type;
+  Set<TimeSlotExtra>? extra;
   DateTime date;
   Duration duration;
   String? message;
@@ -22,7 +25,8 @@ class TimeSlot implements Comparable<TimeSlot> {
     this.id = dummyId,
     required this.ownerId,
     required this.location,
-    this.type = TimeSlotType.common,
+    required this.type,
+    this.extra,
     required this.date,
     required this.duration,
     this.message,
@@ -46,6 +50,7 @@ class TimeSlot implements Comparable<TimeSlot> {
     String? ownerId,
     Location? location,
     TimeSlotType? type,
+    Set<TimeSlotExtra>? extra,
     DateTime? date,
     Duration? duration,
     String? message,
@@ -57,6 +62,10 @@ class TimeSlot implements Comparable<TimeSlot> {
     ownerId: ownerId ?? this.ownerId,
     location: location ?? this.location,
     type: type ?? this.type,
+    extra: listMapper<TimeSlotExtra>(
+      extra ?? this.extra,
+      (v) => v
+    )?.toSet(),
     date: date ?? this.date,
     duration: duration ?? this.duration,
     message: message ?? this.message,
@@ -79,6 +88,10 @@ class TimeSlot implements Comparable<TimeSlot> {
       ownerId: data?['owner_id'],
       location: Location.values.byName(data?['location']),
       type: TimeSlotType.values.byName(data?['type']),
+      extra: listMapper<TimeSlotExtra>(
+        data?['extra'],
+        (v) => TimeSlotExtra.values.byName(v)
+      )?.toSet(),
       date: data?['date'].toDate(),
       duration: Duration(minutes: data?['duration']),
       message: data?['message'],
@@ -94,6 +107,8 @@ class TimeSlot implements Comparable<TimeSlot> {
       'owner_id': ownerId,
       'location': location.name,
       'type': type.name,
+      if (extra != null && extra!.isNotEmpty) 'extra': extra!.map(
+        (v) => v.name).toList(),
       'date': date,
       'duration': duration.inMinutes,
       if (message != null) 'message': message,
