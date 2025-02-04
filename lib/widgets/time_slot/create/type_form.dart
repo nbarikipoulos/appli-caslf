@@ -1,6 +1,6 @@
 import 'package:caslf/models/time_slot/time_slot_type.dart';
+import 'package:caslf/widgets/drop_down_menu_form.dart';
 import 'package:caslf/widgets/localization.dart';
-import 'package:caslf/widgets/toggle_buttons_form.dart';
 import 'package:flutter/material.dart';
 
 class TypeForm extends StatefulWidget {
@@ -11,7 +11,7 @@ class TypeForm extends StatefulWidget {
   const TypeForm({
     super.key,
     required this.types,
-    required  this.initialValue,
+    required this.initialValue,
     required this.onChanged
   });
 
@@ -30,32 +30,32 @@ class _TypeFormState extends State<TypeForm>{
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      children: [
-        ToggleButtonsFormField<TimeSlotType>(
-            values: widget.types,
-            initialValues: [widget.initialValue],
-            itemBuilder: (type) => Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: Row(
-                children: [
-                  Icon(type.icon, color: type.color),
-                  const SizedBox(width: 4),
-                  Text(tr(context)!.time_slot_type(type.name))
-                ],
-              )
-            ),
-            onPressed: (values) {
-              setState(() {
-                selected = values.first;
-              });
-              widget.onChanged.call(values.first);
-            }
+    return Center(
+      child: DropdownMenuFormField<TimeSlotType>(
+        leadingIcon: Icon(selected.icon, color: selected.color),
+        requestFocusOnTap: false,
+        inputDecorationTheme: const InputDecorationTheme(
+          filled: false,
+          contentPadding: EdgeInsets.symmetric(vertical: 8.0),
         ),
-        // const SizedBox(height: 16),
-        // const SizedBox(width: 32),
-      ] ,
+        initialSelection: widget.initialValue,
+        dropdownMenuEntries: widget.types.map<DropdownMenuEntry<TimeSlotType>>(
+          (TimeSlotType type) => DropdownMenuEntry<TimeSlotType>(
+            value: type,
+            label: tr(context)!.time_slot_type(type.name),
+            leadingIcon: Icon(
+                type.icon,
+                color: type.color
+            ),
+          )
+        ).toList(),
+        onSelected: (type) {
+          setState(() {
+            selected = type!;
+          });
+          widget.onChanged.call(selected);
+        }
+      ),
     );
   }
-
 }
