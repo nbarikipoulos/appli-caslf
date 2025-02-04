@@ -5,10 +5,11 @@ import 'package:caslf/models/time_slot/time_slot_type.dart';
 import 'package:caslf/services/admin_service.dart';
 import 'package:caslf/services/grant_service.dart';
 import 'package:caslf/services/time_slot_service.dart';
+import 'package:caslf/services/user_service.dart';
 import 'package:caslf/widgets/localization.dart';
 import 'package:caslf/widgets/time_slot/card/details_part.dart';
 import 'package:caslf/widgets/time_slot/card/header_part.dart';
-import 'package:caslf/widgets/time_slot/card/message.dart';
+import 'package:caslf/widgets/time_slot/card/sub/message.dart';
 import 'package:caslf/widgets/time_slot/time_slot_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -51,7 +52,12 @@ class TimeSlotCard extends StatelessWidget implements TimeSlotWidget {
     };
 
     final showMessage = timeSlot.message != null;
-    final showDetails = timeSlot.ownerId != clubId;
+    final showDetails = (
+      timeSlot.ownerId != clubId
+      && timeSlot.ownerId != UserService().current.uid
+    ) || timeSlot.hasAttendees
+      || timeSlot.status == TimeSlotStatus.accepted
+    ;
 
     return GestureDetector(
       onLongPressStart: (value) {

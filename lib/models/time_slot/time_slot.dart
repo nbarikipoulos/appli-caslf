@@ -1,3 +1,4 @@
+import 'package:caslf/constants.dart';
 import 'package:caslf/models/location/location.dart';
 import 'package:caslf/models/time_slot/time_slot_extra.dart';
 import 'package:caslf/models/time_slot/time_slot_status.dart';
@@ -18,6 +19,7 @@ class TimeSlot implements Comparable<TimeSlot> {
   bool isAllDay;
   TimeSlotStatus status;
   String? confirmedBy;
+  Set<String>? attendees;
 
   static const String dummyId = '---';
 
@@ -33,10 +35,30 @@ class TimeSlot implements Comparable<TimeSlot> {
     this.autoOpen = false,
     this.isAllDay = false,
     required this.status,
-    this.confirmedBy
+    this.confirmedBy,
+    this.attendees
+
   });
 
   DateTime get end => date.add(duration);
+
+  // aka in addition to owner and "acceptor"
+  bool get hasAttendees => attendees != null && attendees!.isNotEmpty;
+
+  int get numberOfUsers =>
+    (ownerId != clubId ? 1 : 0)
+    + (confirmedBy != null ? 1 : 0)
+    + (attendees != null ? attendees!.length : 0)
+  ;
+
+  bool isUserExpected(String uid) => ownerId == uid
+    || confirmedBy == uid
+    || (attendees != null && attendees!.contains(uid))
+  ;
+
+  bool hasExtra(TimeSlotExtra value) => extra != null
+    && extra!.contains(value)
+  ;
 
   @override
   int compareTo(TimeSlot other) {
@@ -57,7 +79,8 @@ class TimeSlot implements Comparable<TimeSlot> {
     bool? autoOpen,
     bool? isAllDay,
     TimeSlotStatus? status,
-    String? confirmedBy
+    String? confirmedBy,
+    Set<String>? attendees
   }) => TimeSlot(
     ownerId: ownerId ?? this.ownerId,
     location: location ?? this.location,
@@ -72,7 +95,8 @@ class TimeSlot implements Comparable<TimeSlot> {
     autoOpen: autoOpen ?? this.autoOpen,
     isAllDay: isAllDay ?? this.isAllDay,
     status: status ?? this.status,
-    confirmedBy: confirmedBy ?? this.confirmedBy
+    confirmedBy: confirmedBy ?? this.confirmedBy,
+    attendees: attendees ?? this.attendees
   );
 
   factory TimeSlot.fromFirestore(
@@ -99,6 +123,10 @@ class TimeSlot implements Comparable<TimeSlot> {
       isAllDay: data?['is_all_day'] ?? false,
       status: TimeSlotStatus.values.byName(data?['status']),
       confirmedBy: data?['confirmed_by'], // aka null if not set
+      attendees: listMapper<String>(
+        data?['attendees'],
+        (v) => v
+      )?.toSet()
     );
   }
 
@@ -115,7 +143,8 @@ class TimeSlot implements Comparable<TimeSlot> {
       'status': status.name,
       if (autoOpen) 'auto_open' : autoOpen,
       if (isAllDay) 'is_all_day': isAllDay,
-      if (confirmedBy != null) 'confirmed_by' : confirmedBy
+      if (confirmedBy != null) 'confirmed_by' : confirmedBy,
+      if (attendees != null && attendees!.isNotEmpty) 'attendees' : attendees
     };
   }
 

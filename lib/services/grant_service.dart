@@ -1,6 +1,7 @@
 import 'package:caslf/constants.dart';
 import 'package:caslf/models/location/location.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
+import 'package:caslf/models/time_slot/time_slot_type.dart';
 import 'package:caslf/models/user/user_data.dart';
 import 'package:caslf/models/user/user_grant.dart';
 import 'package:caslf/models/user/user_type.dart';
@@ -52,6 +53,28 @@ class GrantService implements Service {
     || actAsClub
     || adminService.isAdminMode
   ;
+
+  bool canJoinTimeSlot(TimeSlot timeSlot) {
+    bool result = false;
+    final UserType userType = _user.grant!.type;
+
+    switch(userType) {
+      case UserType.confirmed:
+      case UserType.guest: // blocked later
+        result = true;
+        break;
+      case UserType.beginner:
+        result =
+          timeSlot.type == TimeSlotType.maintenance // They can come :D
+          || timeSlot.type == TimeSlotType.event
+          || timeSlot.location != Location.ground
+        ;
+        break;
+      default: result = false; break;
+    }
+
+    return result;
+  }
 
   //
   // Manage 'guest' user

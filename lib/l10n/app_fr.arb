@@ -11,6 +11,9 @@
   "time_slot_from_to": "de {start} à {to}",
   "created_by": "Créé par {user}",
   "accepted_by": "Accepté par {user}",
+  "tooltip_join_time_slot": "se joindre",
+  "tooltip_leave_time_slot": "se retirer",
+  "attendees": "{n, plural, zero{Aucun archer} one{1 archer attendu} other{{n} archers attendus}}",
 
   "ok" : "OK",
 
@@ -32,7 +35,6 @@
   "day_type":  "{day, select, today{aujourd'hui} tomorrow{demain} other{un autre jour} }",
   "day_short":  "{day, select, monday{lun.} tuesday{mar.} wednesday{mer.} thursday{jeu.} friday{ven.} saturday{sam.} sunday{dim.} other{---} }",
   "day_long":  "{day, select, monday{lundi} tuesday{mardi} wednesday{mercredi} thursday{jeudi} friday{vendredi} saturday{samedi} sunday{dimanche} other{---} }",
-
 
   "nothing": "Rien!",
 
