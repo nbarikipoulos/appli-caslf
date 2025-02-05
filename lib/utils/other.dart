@@ -9,7 +9,10 @@ List<T>? listMapper<T>(
   : null
 ;
 
-T? mapper<T>(String? fieldData, T Function(String v) mapper) => fieldData != null
-    ? mapper.call(fieldData)
-    : null
+T? mapper<T>(
+  String? fieldData,
+  T Function(String v) mapper
+) => fieldData != null
+  ? mapper.call(fieldData)
+  : null
 ;

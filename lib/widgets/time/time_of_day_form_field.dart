@@ -74,9 +74,7 @@ class TimeOfDayFormFieldState extends State<TimeOfDayFormField> {
 }
 
 class TimeEditingControllerOfDay extends ExtendedEditingController<TimeOfDay> {
-  TimeEditingControllerOfDay({
-    TimeOfDay? initialValue
-  }) : super(initialValue: initialValue);
+  TimeEditingControllerOfDay({ super.initialValue });
 
   @override
   void updateText() {

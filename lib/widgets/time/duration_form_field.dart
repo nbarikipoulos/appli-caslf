@@ -74,9 +74,7 @@ class DurationFormFieldState extends State<DurationFormField> {
 }
 
 class DurationEditingController extends ExtendedEditingController<Duration> {
-  DurationEditingController({
-    Duration? initialValue
-  }) : super(initialValue: initialValue);
+  DurationEditingController({ super.initialValue });
 
   @override
   void updateText() {

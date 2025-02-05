@@ -90,7 +90,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
            tr(context)!.location(entry.key.name),
            entry.key.color
          )
-       )).toList(),
+       )),
        createGroup(
          context,
          [news],
@@ -139,7 +139,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
             )
           )
         )
-      ).toList()
+      )
     ]
   )
 );

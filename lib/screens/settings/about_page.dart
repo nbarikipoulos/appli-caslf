@@ -119,7 +119,7 @@ class _AboutPageState extends State<AboutPage> {
                   right: authStatus!.name
                 )
                 ].map((item) => f(item.left, item.right))
-                  .expand((i) => i).toList(),
+                  .expand((i) => i),
                 if (isWeb) ...[
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

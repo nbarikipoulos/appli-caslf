@@ -81,13 +81,10 @@ class DateFormFieldState extends State<DateFormField> {
       })
     },
   );
-
 }
 
 class DateTimeEditingController extends ExtendedEditingController<DateTime> {
-  DateTimeEditingController({
-    DateTime? initialValue
-  }) : super(initialValue: initialValue);
+  DateTimeEditingController({ super.initialValue });
 
   @override
   void updateText() {

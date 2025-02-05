@@ -45,7 +45,9 @@ class _UserPageState extends State<UserPage> {
                   SignedOutAction((context) async {
                     await ServicesHandler().clear();
                     await FirebaseAuth.instance.signOut();
-                    context.goNamed('login');
+                    if (context.mounted) {
+                      context.goNamed('login');
+                    }
                   }),
                 ],
                 children: [
