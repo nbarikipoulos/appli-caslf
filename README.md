@@ -6,6 +6,7 @@ Application de création/réservation de créneaux horaires pour club sportif:
     - ou non *i.e.* ouverture à façon par les membres disposant d'un accès,
     - en corollaire, informe automatiquement les autres membres du club des ouvertures,
     - possibilité de demander un créneau pour les non détenteurs d'accès qui devra être donc validé,
+    - nombre de participants,
     - événements, fermetures exceptionnelles, etc.
 - gestion fine des droits utilisateurs et des actions associées: 
     - peut ouvrir un lieu de pratique,
@@ -16,7 +17,7 @@ Application de création/réservation de créneaux horaires pour club sportif:
 - accès restreint à l'application, sur invitation seulement,
 - notifications des utilisateurs.
 
-L'application est actuellement configurée pour la Compagnie d'Arc de Saint-leu-la-forêt *i.e.* pour:
+L'application est actuellement configurée pour la **Compagnie d'Arc de Saint-leu-la-forêt** *i.e.* pour:
 - 2 lieux de pratique: gymnase et terrain,
 - 2 types d'utilisateurs: débutant et confirmé,
 - charte graphique à dominante verte,
@@ -34,13 +35,13 @@ Disponible actuellement en tant qu'application mobile, PWA ou site web.
 
 | Système| application mobile | PWA | site internet |
 | --- | --- | --- | --- |
-| Android| ✅ (Android >= 6)| ✅ (*) | ✅ |
+| Android| ✅ (Android >= 8)| ✅ (*) | ✅ |
 | iOS | ❌(à faire) | ✅ (iOS>=17.5)| ✅ | 
 | Ordinateur | n.a. | ✅ | ✅ |
 
-(*) Notifications a partir dAndroid 13 (à vérifier plus finement).
+(*) En PWA sous Android, les notifications semblent pleinement fonctionnelles à partir d'Android 13 (à vérifier plus finement).
 
-Pour activer les notifications, un serveur back est nécessaire et disponible [ici][caslf-appli-server-url].
+Pour que les notifications soient opérationnelles, un serveur back est nécessaire (disponible [ici][caslf-appli-server-url]).
 
 ## Installation
 
@@ -89,13 +90,23 @@ flutter run -d <device_id>
 #### WWW/PWA
 
 ```shell
+# générer
 flutter build web --release -o $pwd/public
+firebase init hosting
+
+# déploiement (pour test)
+firebase hosting:channel:deploy preprod
+
+# déploiement (prod)
 firebase deploy
 ```
 
 #### Android
 ```shell
+# apk
 flutter build apk
+# Play store
+flutter build appbundle
 ```
 
 ## Projets annexes
