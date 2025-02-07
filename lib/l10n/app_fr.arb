@@ -119,6 +119,7 @@
 
   "advanced_mode_activate": "Activer le mode avancé",
   "use_alternative_channels": "Utiliser des canaux alternatifs",
+  "switch_notification_send_off": "Désactiver l'envoi de notifications",
 
   "message_open_close_title": "{location} {status}",
   "message_open_body": "Séance prévue jusqu'à {to}.",

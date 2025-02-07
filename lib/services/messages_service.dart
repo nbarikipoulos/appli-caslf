@@ -21,6 +21,7 @@ class MessagesService extends ChangeNotifier implements Service {
   factory MessagesService() => _instance ??= MessagesService._();
 
   bool get useAlternativeChannels => _useAlternativeChannels;
+  bool get isSendOfNotificationSwitchedOff => _switchSendOfNotificationOff;
 
   final Map<Channel, bool?> _subscriptions = {};
 
@@ -35,8 +36,10 @@ class MessagesService extends ChangeNotifier implements Service {
 
   final SharedPreferencesAsync _asyncPrefs = SharedPreferencesAsync();
   final String _altChannelPrefId = 'alt_channel';
+  final String _switchSendOfNotificationOffId = 'send_notif_off';
 
   bool _useAlternativeChannels = false;
+  bool _switchSendOfNotificationOff = false;
   final _prefix = 'alt';
 
   Future<void> toggleChannels() async {
@@ -44,15 +47,35 @@ class MessagesService extends ChangeNotifier implements Service {
 
     _useAlternativeChannels = !_useAlternativeChannels;
 
-    await _asyncPrefs.setBool(_altChannelPrefId, _useAlternativeChannels);
+    await _asyncPrefs.setBool(
+      _altChannelPrefId,
+      _useAlternativeChannels
+    );
 
     await initSubscriptions(true);
+
+    notifyListeners();
+  }
+
+  Future<void> toggleSwitchSendOfNotificationOff () async {
+    _switchSendOfNotificationOff = !_switchSendOfNotificationOff;
+
+    await _asyncPrefs.setBool(
+      _switchSendOfNotificationOffId,
+      _switchSendOfNotificationOff
+    );
+
+    notifyListeners();
   }
 
   Future<void> send(Message message) async {
     // Mainly to ensure that 'guest' can not send any message/notification.
     // See GrantService.
-    if (!_grantService.isAllowedToSendNotification) {
+    // + advanced mode for test purposes.
+    if (
+      !_grantService.isAllowedToSendNotification
+      || _switchSendOfNotificationOff
+    ) {
       // Early Exit
       return Future.value();
     }
@@ -276,6 +299,11 @@ class MessagesService extends ChangeNotifier implements Service {
     // Let's perform (pseudo)init of channels.
     // Do not await for result, not needed.
     initSubscriptions(canInitChannel);
+
+    // AdvancedMode/switchNotificationSendOff
+    _switchSendOfNotificationOff = await _asyncPrefs.getBool(
+      _switchSendOfNotificationOffId
+    ) ?? false; //aka default
   }
 
   @override
