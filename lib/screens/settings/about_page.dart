@@ -75,9 +75,11 @@ class _AboutPageState extends State<AboutPage> {
             : Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                HeadingItem(
-                  title: appName!.toUpperCase(),
-                  //style: Theme.of(context).textTheme.headlineSmall
+                Center(
+                  child: HeadingItem(
+                    title: appName!.toUpperCase(),
+                    //style: Theme.of(context).textTheme.headlineSmall
+                  ),
                 ),
                 const SizedBox(height: 32.0),
                 InkWell(
