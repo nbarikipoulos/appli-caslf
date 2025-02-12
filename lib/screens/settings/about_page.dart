@@ -145,8 +145,10 @@ class _AboutPageState extends State<AboutPage> {
                 ],
                 if (isAdvancedMode || _showExtra) ...[
                   const SizedBox(height: 16.0),
-                  HeadingItem(
-                    title: tr(context)!.screen_about_advanced_mode
+                  Center(
+                    child: HeadingItem(
+                      title: tr(context)!.screen_about_advanced_mode
+                    ),
                   ),
                   const SizedBox(height: 16.0),
                   const AdvancedMode()
