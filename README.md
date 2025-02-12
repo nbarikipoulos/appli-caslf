@@ -17,7 +17,7 @@ Application de création/réservation de créneaux horaires pour club sportif:
 - accès restreint à l'application, sur invitation seulement,
 - notifications des utilisateurs.
 
-L'application est actuellement configurée pour la **Compagnie d'Arc de Saint-leu-la-forêt** *i.e.* pour:
+L'application est actuellement configurée pour la **Compagnie d'Arc de Saint-Leu-la-Forêt** *i.e.* pour:
 - 2 lieux de pratique: gymnase et terrain,
 - 2 types d'utilisateurs: débutant et confirmé,
 - charte graphique à dominante verte,
@@ -33,15 +33,17 @@ L'application est actuellement configurée pour la **Compagnie d'Arc de Saint-le
 
 Disponible actuellement en tant qu'application mobile, PWA ou site web.
 
-| Système| application mobile | PWA | site internet |
+| système| application mobile | PWA | site internet |
 | --- | --- | --- | --- |
 | Android| ✅ (Android >= 8)| ✅ (*) | ✅ |
-| iOS | ❌(à faire) | ✅ (iOS>=17.5)| ✅ | 
-| Ordinateur | n.a. | ✅ | ✅ |
+| iOS | ❌ (à faire) | ✅ (**)| ✅ | 
+| ordinateur | n.a. | ✅ | ✅ |
 
 (*) En PWA sous Android, les notifications semblent pleinement fonctionnelles à partir d'Android 13 (à vérifier plus finement).
 
-Pour que les notifications soient opérationnelles, un serveur back est nécessaire (disponible [ici][caslf-appli-server-url]).
+(**) En PWA sous iOS Les notifications nécessitent une verison iOS supérieure ou égale à la 17.5.
+
+De plus, pour que les notifications soient opérationnelles, un serveur back est nécessaire (disponible [ici][caslf-appli-server-url]).
 
 ## Installation
 
@@ -109,7 +111,7 @@ flutter build apk
 flutter build appbundle
 ```
 
-## Projets annexes
+## Projets Annexes
 
 - Serveur de notifications disponible [ici][caslf-appli-server-url],
 - Documentation utilisateur accessible [là][caslf-appli-doc-url].
