@@ -73,7 +73,8 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
 
   WhensFormData get defaultRecurrentData => (
     start: TimeService().today,
-    end: TimeService().timeLimit,
+    end: TimeService().today
+      .add(Duration(days: 14)),
     days: [Day.monday],
     timeOfDay: const TimeOfDay(hour: 18, minute: 30),
     duration: const Duration(hours: 4)
