@@ -1,3 +1,4 @@
+import 'package:caslf/models/time_slot/time_slot_type.dart';
 import 'package:caslf/services/admin_service.dart';
 import 'package:caslf/services/grant_service.dart';
 import 'package:caslf/services/time_service.dart';
@@ -83,6 +84,10 @@ class _TimeSlotListViewState extends State<TimeSlotListView> {
     item is TimeSlotWidget
     && DayType.getType(item.timeSlot.date) == DayType.today
     && grantService.hasAccessTo(item.timeSlot.location)
+    && !(
+      item.timeSlot.type == TimeSlotType.closed
+      || item.timeSlot.type == TimeSlotType.maintenance
+    )
   ;
 
   List<Widget> _items() {
