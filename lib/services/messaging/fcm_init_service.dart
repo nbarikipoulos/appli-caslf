@@ -65,7 +65,7 @@ class FcmInitService extends ChangeNotifier implements Service {
     ;
 
     if (
-      ApplicationService().isWepAppOnIOS
+      ApplicationService().isWeb
       && alreadyDone
     ) {
       _authForMessaging = await getPermission();
@@ -74,8 +74,11 @@ class FcmInitService extends ChangeNotifier implements Service {
     }
 
     if (_authForMessaging == AuthorizationStatus.authorized) {
-      await initNotification();
-      await setFcmToken();
+      try {
+        await setFcmToken(); // could raise exception on "pure" web, not pwa
+        await initNotification();
+      } catch (_) {/* Do nothing */}
+
       await _asyncPrefs.setBool(_authAlreadyDoneAndOkId, true);
       _initialized = true;
       notifyListeners();
@@ -86,8 +89,6 @@ class FcmInitService extends ChangeNotifier implements Service {
 
   @override
   Future init() async {
-    // _authForMessaging = await getPermission();
-
     //
     // Early exits
     //
@@ -99,8 +100,8 @@ class FcmInitService extends ChangeNotifier implements Service {
 
     bool authOK = await _asyncPrefs.getBool(_authAlreadyDoneAndOkId) ?? false;
 
-    // iOS need action from users => initialization delayed
-    if (!authOK && ApplicationService().isWepAppOnIOS) {
+    // Need action from users => initialization delayed
+    if (!authOK && ApplicationService().isWeb) {
       return;
     }
 

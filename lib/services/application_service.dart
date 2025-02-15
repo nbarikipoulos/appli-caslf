@@ -13,8 +13,8 @@ class ApplicationService extends ChangeNotifier implements Service {
   factory ApplicationService() => _instance ??= ApplicationService._();
 
   bool get loggedIn => _loggedIn;
-  bool get isWebApp => kIsWeb;
-  bool get isWepAppOnIOS => _isWepAppOnIOS!;
+  bool get isWeb => kIsWeb;
+  bool get isWebOnIOS => _isWebOnIOS!;
 
   bool get isAdvancedMode => _isAdvancedMode!;
 
@@ -28,7 +28,7 @@ class ApplicationService extends ChangeNotifier implements Service {
   }
 
   bool _loggedIn = false;
-  bool? _isWepAppOnIOS;
+  bool? _isWebOnIOS;
   bool? _isAdvancedMode;
 
   final SharedPreferencesAsync _asyncPrefs = SharedPreferencesAsync();
@@ -45,13 +45,13 @@ class ApplicationService extends ChangeNotifier implements Service {
       final deviceInfo = await deviceInfoPlugin.deviceInfo;
       final platform = deviceInfo.data['platform'].toLowerCase();
 
-      _isWepAppOnIOS =
+      _isWebOnIOS =
         platform == 'iphone' ||
         platform == 'ipad' ||
         platform == 'ios'
       ;
     } else {
-      _isWepAppOnIOS = false;
+      _isWebOnIOS = false;
     }
 
     _isAdvancedMode = await _asyncPrefs.getBool(_advancedModePrefId);

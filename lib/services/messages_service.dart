@@ -134,12 +134,13 @@ class MessagesService extends ChangeNotifier implements Service {
         .catchError((err) { result = false; })
       ;
     } else {
-      _webUpdateTopic(
-        channel: channel,
-        action: ChannelAction.subscribe
-      ).catchError(
-        (err) { result = false; }
-      );
+      try {
+        _webUpdateTopic(
+            channel: channel,
+            action: ChannelAction.subscribe,
+            fcmToken: _fcmInitService.fcmToken!
+        ).catchError((err) { result = false; });
+      } on Error catch (_) { result = false; }
     }
 
     return Future.value(result);
@@ -154,12 +155,13 @@ class MessagesService extends ChangeNotifier implements Service {
         .catchError((err) { result = false; })
       ;
     } else {
-      _webUpdateTopic(
-        channel: channel,
-        action: ChannelAction.unsubscribe
-      ).catchError(
-        (err) { result = false; }
-      );
+      try {
+        _webUpdateTopic(
+          channel: channel,
+          action: ChannelAction.unsubscribe,
+          fcmToken: _fcmInitService.fcmToken!
+        ).catchError((err) { result = false; });
+      } on Error catch (_) { result = false; }
     }
 
     return Future.value(result);
@@ -167,7 +169,8 @@ class MessagesService extends ChangeNotifier implements Service {
 
   Future<void> _webUpdateTopic({
     required Channel channel,
-    required ChannelAction action
+    required ChannelAction action,
+    required String fcmToken
   }) async {
     // Get uid/channel document, if any
     QueryDocumentSnapshot? query;
@@ -187,7 +190,7 @@ class MessagesService extends ChangeNotifier implements Service {
           .collection(_collectionChannelAuthId)
           .doc(query.id)
           .update({
-            'fcm': _fcmInitService.fcmToken,
+            'fcm': fcmToken,
             'action': action.name,
             'status': 'todo'
           })
@@ -196,7 +199,7 @@ class MessagesService extends ChangeNotifier implements Service {
           .doc()
           .set({
             'uid': _user.uid,
-            'fcm': _fcmInitService.fcmToken,
+            'fcm': fcmToken,
             'channel_id': channel.id,
             'action': action.name,
             'status': 'todo'
@@ -279,8 +282,6 @@ class MessagesService extends ChangeNotifier implements Service {
       if (canReallyInit) { // Aka initial seed
         // Enforce subscription at t0
         setSubscribingFor(channel, subscribe);
-      } else { // Only update the local map
-        _subscriptions[channel] = subscribe;
       }
     }
   }
@@ -292,7 +293,7 @@ class MessagesService extends ChangeNotifier implements Service {
     // and grants for notifications has not been previously rejected by user.
 
     bool canInitChannel =
-      !ApplicationService().isWepAppOnIOS // must be delayed
+      !ApplicationService().isWeb // Delayed
       || _fcmInitService.isNotificationGranted
     ;
 

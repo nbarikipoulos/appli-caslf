@@ -32,7 +32,7 @@ class _AboutPageState extends State<AboutPage> {
   late int count;
   Timer? _timer;
 
-  final bool isWeb = ApplicationService().isWebApp;
+  final bool isWeb = ApplicationService().isWeb;
 
   @override
   void initState() {
