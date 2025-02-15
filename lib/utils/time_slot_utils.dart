@@ -4,6 +4,7 @@ import 'package:caslf/models/message/channel_type.dart';
 import 'package:caslf/models/message/message.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/models/time_slot/time_slot_status.dart';
+import 'package:caslf/models/time_slot/time_slot_type.dart';
 import 'package:caslf/utils/date_utils.dart';
 import 'package:caslf/utils/day.dart';
 import 'package:caslf/utils/string_utils.dart';
@@ -67,7 +68,7 @@ extension TimeSlotExtension on TimeSlot {
       DateTime? end, // idem
       List<Day>? days // re...
     }) {
-    var loc = context.localization;
+    var localization = context.localization;
 
     bool shouldBeConfirmed = TimeSlotStatus.awaiting == status;
 
@@ -84,21 +85,27 @@ extension TimeSlotExtension on TimeSlot {
     String title;
     String body;
 
-    String locationLabel = loc.location(location.name);
+    String locationLabel = localization.location(location.name);
     
     final [timeStart, timeEnd] = [date, this.end].map((date) => TimeOfDay
       .fromDateTime(date)
       .toHHMM()
     ).toList();
-    
+
+    var scheduleLabel = isAllDay
+      ? localization.all_day
+      : localization.time_slot_from_to(timeStart, timeEnd)
+    ;
+
+
     if (recurrent) {
       // title
-      title = loc.message_new_timeslots_title(locationLabel);
+      title = localization.message_new_timeslots_title(locationLabel);
 
       // body
 
       String daysLabel = days!
-        .map((day) => loc.day_long(day.name).append('s')) // FIXME
+        .map((day) => localization.day_long(day.name).append('s')) // FIXME
         .toList()
         .join(', ')
       ;
@@ -107,40 +114,53 @@ extension TimeSlotExtension on TimeSlot {
         (date) => date.getDayMonthAsString()
       ).toList();
       
-      body = loc.message_new_timeslots_body(
+      body = localization.message_new_timeslots_body(
         dayStart,
-        dayEnd, daysLabel,
-        timeStart,
-        timeEnd
+        dayEnd,
+        daysLabel,
+        scheduleLabel
       );
     } else {
       // title
 
       var f = shouldBeConfirmed
-        ? loc.message_ask_new_timeslot_title
-        : loc.message_new_timeslot_title
+        ? localization.message_ask_new_timeslot_title
+        : switch(type) {
+          TimeSlotType.common => localization.message_new_timeslot_title,
+          TimeSlotType.event => localization.message_event_title,
+          TimeSlotType.maintenance => localization.message_maintenance_title,
+          TimeSlotType.closed => localization.message_closed_title
+        }
       ;
 
-      title = f.call(locationLabel);
+      var arg = type == TimeSlotType.event
+        ? message!
+        : locationLabel
+      ;
+
+      title = f.call(arg);
 
       // body
 
       var dateLabel = switch(DayType.getType(date)) {
-        DayType.today => loc.today,
-        DayType.tomorrow => loc.tomorrow,
+        DayType.today => localization.today,
+        DayType.tomorrow => localization.tomorrow,
         _ => date.getDayAsString(),
       }.toCapitalized;
 
-      var bf = shouldBeConfirmed
-        ? loc.message_ask_new_timeslot_body
-        : loc.message_new_timeslot_body
-      ;
-
-      body= bf.call(
-        dateLabel,
-        timeStart,
-        timeEnd
-      );
+      body = switch(type) {
+        TimeSlotType.common ||
+        TimeSlotType.maintenance ||
+        TimeSlotType.closed => localization.message_new_timeslot_body(
+          dateLabel,
+          scheduleLabel
+        ),
+        TimeSlotType.event => localization.message_event_body(
+          dateLabel,
+          locationLabel,
+          scheduleLabel
+        ),
+      };
     }
 
     return Message.create(
@@ -154,26 +174,26 @@ extension TimeSlotExtension on TimeSlot {
     BuildContext context,
     { required LocationAction action }
   ) {
-    var loc = context.localization;
+    var localization = context.localization;
 
     final channelId = Channel.computeId(
       type: ChannelType.openClose,
       location: location
     );
 
-    final locationLabel = loc.location(location.name);
-    final locationStatusLabel = loc.location_status(action.name);
+    final locationLabel = localization.location(location.name);
+    final locationStatusLabel = localization.location_status(action.name);
 
-    final title = loc.message_open_close_title(
+    final title = localization.message_open_close_title(
       locationLabel.toCapitalized,
       locationStatusLabel
     );
 
     final body = switch(action) {
-      LocationAction.open => loc.message_open_body(
+      LocationAction.open => localization.message_open_body(
         TimeOfDay.fromDateTime(end).toHHMM()
       ),
-      LocationAction.close => loc.message_close_body
+      LocationAction.close => localization.message_close_body
     };
 
     return Message.create(

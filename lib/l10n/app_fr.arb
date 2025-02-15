@@ -126,13 +126,16 @@
   "message_close_body": ":'(",
 
   "message_new_timeslot_title": "Nouveau créneau au {location}",
-  "message_new_timeslot_body": "{date} de {hour_begin} à {hour_end}.",
+  "message_ask_new_timeslot_title": "Demande de créneau au {location}",
+  "message_event_title": "Événement: {titled}",
+  "message_maintenance_title": "Travaux au {location}",
+  "message_closed_title": "Fermeture du {location}",
+
+  "message_new_timeslot_body": "{date}, {schedule}.",
+  "message_event_body": "Au {location}, {date}, {schedule}.",
 
   "message_new_timeslots_title": "Nouveaux créneaux au {location}",
-  "message_new_timeslots_body": "Les {days} du {date_begin} au {date_end} de {hour_begin} à {hour_end}.",
-
-  "message_ask_new_timeslot_title": "Demande de créneau au {location}",
-  "message_ask_new_timeslot_body": "{date} de {hour_begin} à {hour_end}.",
+  "message_new_timeslots_body": "Les {days} du {date_begin} au {date_end}, {schedule}.",
 
   "guest_message_timeslot" : "Vous êtes connecté en tant qu'invité: Le créneau ne sera pas créé."
 }
