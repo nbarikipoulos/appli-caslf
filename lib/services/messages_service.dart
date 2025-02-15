@@ -309,17 +309,18 @@ class MessagesService extends ChangeNotifier implements Service {
 
   @override
   Future clear() async {
-    // Shut notifications at logout down....
-    // Get Channels
-    var channels = _subscriptions.keys.toList(); // getAllowedChannels();
+    // Get active channels
+    var channels = _subscriptions
+      .entries
+      .where((elt) => elt.value != null && elt.value == true)
+      .map((elt) => elt.key)
+      .toList()
+    ;
 
-    for (var channel in channels) {
-      // should exist in map...
-      bool subscribed = _subscriptions[channel]!;
-      if (subscribed) {
-        _unsubscribeFromTopic(channel);
-      }
-    }
+    // Unsubscribe
+    await Future.wait<bool>(
+      channels.map(_unsubscribeFromTopic)
+    );
 
     // Clean-up map
     _subscriptions.clear();
