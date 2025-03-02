@@ -1,4 +1,5 @@
 import 'package:caslf/firebase/firebase_options.dart';
+import 'package:caslf/l10n/generated/app_localizations.dart';
 import 'package:caslf/router/app_router.dart';
 import 'package:caslf/services/admin_service.dart';
 import 'package:caslf/services/application_service.dart';
@@ -17,7 +18,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:firebase_ui_localizations/firebase_ui_localizations.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';

@@ -12,6 +12,9 @@ firebase.json
 lib/firebase/firebase_options.dart
 android/app/google-services.json
 
+# Generated
+lib/l10n/generated/
+
 # IntelliJ/Android Studio
 .idea
 *.iml
