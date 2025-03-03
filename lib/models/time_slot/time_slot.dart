@@ -139,7 +139,10 @@ class TimeSlot implements Comparable<TimeSlot> {
         (v) => v.name).toList(),
       'date': date,
       'duration': duration.inMinutes,
-      if (message != null) 'message': message,
+      if (
+        message != null
+        && message!.trim().isNotEmpty
+      ) 'message': message!.trim(),
       'status': status.name,
       if (autoOpen) 'auto_open' : autoOpen,
       if (isAllDay) 'is_all_day': isAllDay,
