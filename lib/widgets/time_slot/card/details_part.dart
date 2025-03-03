@@ -56,13 +56,13 @@ class _DetailsPartState extends State<DetailsPart> {
                if (showOwnerId) Selector<UserService, String?>(
                  selector: selector(widget.timeSlot.ownerId),
                  builder: (context, name, __) => Text(
-                   tr(context)!.created_by(name ?? '???')
+                   tr(context)!.created_by(_toDisplayedName(name))
                  )
                ),
                if (hasBeenAccepted) Selector<UserService, String?>(
                  selector: selector(widget.timeSlot.confirmedBy!),
                  builder: (context, name, __) => Text(
-                   tr(context)!.accepted_by(name ?? '???')
+                   tr(context)!.accepted_by(_toDisplayedName(name))
                  )
                ),
                if (hasAttendees) Text(
@@ -74,6 +74,11 @@ class _DetailsPartState extends State<DetailsPart> {
       }
     );
   }
+
+  String _toDisplayedName(String? name) => name == null || name.trim().isEmpty
+    ? '???'
+    : name
+  ;
 
   // aka owner, confirmedBy
   Future<(UserData, UserData?)> _init() async {

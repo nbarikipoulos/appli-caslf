@@ -40,7 +40,7 @@ class _UserPageState extends State<UserPage> {
                 providers: const [],
                 actions: [
                   DisplayNameChangedAction( (_, __, newName) async {
-                    await UserService().updateDisplayName(newName);
+                    await UserService().updateDisplayName(newName.trim());
                   }),
                   SignedOutAction((context) async {
                     await ServicesHandler().clear();
