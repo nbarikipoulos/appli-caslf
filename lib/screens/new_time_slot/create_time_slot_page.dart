@@ -26,9 +26,39 @@ import 'package:caslf/widgets/time_slot/create/type_form.dart';
 import 'package:caslf/widgets/time_slot/create/when_form.dart';
 import 'package:caslf/widgets/time_slot/create/whens_form.dart';
 import 'package:caslf/widgets/time_slot/create/where_form.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+
+enum CreatedBy { user, club }
+
+enum Functionality {
+  location(editable: false),
+  type(mode: CreatedBy.club, editable: false),
+  changeDay(editable: false),
+  recurrent(editable: false),
+  canNotNotify(mode: CreatedBy.club, editable: true),
+  autoOpen(mode: CreatedBy.club, editable: true);
+
+  bool show({CreatedBy? mode, bool value = true}) =>
+    (this.mode == null || this.mode == mode)
+    && value
+  ;
+
+  bool isEditable(bool isEditing, [value = true]) =>
+    !isEditing
+    || (editable && value)
+  ;
+
+  final CreatedBy? mode;
+  final bool editable;
+
+  const Functionality({
+    this.mode,
+    required this.editable
+  });
+}
 
 class CreateTimeSlotPage extends StatefulWidget {
   final TimeSlot? timeSlot;
@@ -45,10 +75,14 @@ class CreateTimeSlotPage extends StatefulWidget {
 class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
   final user = UserService().current;
 
+  bool get isEditing => widget.timeSlot != null;
+
   //FIXME Use only in Form; something is wrong at init time, to understand...
   final autovalidateMode = AutovalidateMode.always;
 
   late TimeSlot current;
+  late CreatedBy mode;
+
 
   bool recurrent = false;
   late WhensFormData recurrentData;
@@ -84,18 +118,19 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
   void initState() {
     super.initState();
 
-    current = defaultTimeSlot.copyWith(
-      ownerId: user.uid,
-      location: widget.timeSlot?.location,
-      date: widget.timeSlot?.date,
-      duration: widget.timeSlot?.duration,
-      status: widget.timeSlot?.status
-    );
+    if (isEditing) {
+      current = widget.timeSlot!.copyWith();
+    } else {
+      current = defaultTimeSlot.copyWith(
+        ownerId: AdminService().actAsClub ? clubId : user.uid
+      );
+    }
+
+    mode = current.ownerId == clubId ? CreatedBy.club : CreatedBy.user;
 
     recurrent = false;
     recurrentData = defaultRecurrentData;
     doNotNotify = false;
-
   }
 
   @override
@@ -115,22 +150,36 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
     ].map(context.select<GrantService, bool>)
     .toList();
 
-    // Init values next to change
+    //
+    // Init values next to grant change(s)
+    //
+
     if (!canNotNotify) { doNotNotify = false; }
+
     if (!isRecurrentAllowed) { recurrent = false; }
-    if (!actAsClub) {
-      current.type = TimeSlotType.common;
-      current.extra?.add(TimeSlotExtra.casual);
-    } else {
-      current.extra?.remove(TimeSlotExtra.casual);
+
+    if (!isEditing) {
+      if (actAsClub) {
+        mode = CreatedBy.club;
+        current.ownerId = clubId;
+        current.extra?.remove(TimeSlotExtra.casual);
+      } else {
+        mode = CreatedBy.user;
+        current.ownerId = user.uid;
+        current.type = TimeSlotType.common;
+        current.extra?.add(TimeSlotExtra.casual);
+      }
     }
+
     if (!canActivateAutoOpen) { current.autoOpen = false; }
 
     return Scaffold(
         appBar: AppBar(
         title: MyTitle(
-          title: tr(context)!.screen_create_title,
-          icon: actAsClub ? Icons.pets : null,
+          title: isEditing
+            ? tr(context)!.screen_edit_title
+            : tr(context)!.screen_create_title,
+          icon: mode == CreatedBy.club ? Icons.pets : null,
           color: primary
         ),
       ),
@@ -147,7 +196,9 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
                   child: HeadingItem(title: tr(context)!.where.toCapitalized)
                 ),
                 WhereForm(
-                  locations: Location.values,
+                  locations: Functionality.location.isEditable(isEditing)
+                    ? Location.values
+                    : [current.location],
                   initialValue: current.location,
                   onChanged: (Location value) {
                     setState(() {
@@ -155,27 +206,32 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
                     });
                   }
                 ),
-                ...canChangeType ?
-                  [
-                    Center(
-                      child: HeadingItem(title: tr(context)!.type.toCapitalized)
-                    ),
-                    TypeForm(
-                      types: TimeSlotType.values,
-                      initialValue: current.type,
-                      onChanged: (value) {
-                        setState(() {
-                          current.type = value;
-                        });
-                      }
-                    )
-                  ]
-                  : [Container()]
-                ,
+                if(Functionality.type.show(
+                  mode: mode,
+                  value: canChangeType
+                )) ...[
+                  Center(
+                    child: HeadingItem(title: tr(context)!.type.toCapitalized)
+                  ),
+                  TypeForm(
+                    types: Functionality.type.isEditable(isEditing)
+                      ? TimeSlotType.values
+                      : [current.type],
+                    initialValue: current.type,
+                    onChanged: (value) {
+                      setState(() {
+                        current.type = value;
+                      });
+                    }
+                  )
+                ],
                 Center(
                   child: HeadingItem(title: tr(context)!.when.toCapitalized)
                 ),
-                if (isRecurrentAllowed) SwitchListTile(
+                if (
+                  Functionality.recurrent.show(value: isRecurrentAllowed)
+                  && Functionality.recurrent.isEditable(isEditing)
+                ) SwitchListTile(
                   //controlAffinity: ListTileControlAffinity.leading,
                   title: Text(
                     tr(context)!.screen_create_recurrent_switch
@@ -192,7 +248,8 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
                     autovalidateMode: autovalidateMode,
                     initialDate: current.date,
                     initialDuration: current.duration,
-                    allowAllDay: actAsClub,
+                    allowAllDay: mode == CreatedBy.club,
+                    canChangeDay: !isEditing,
                     onChanged: (WhenFormData value) {
                       setState(() {
                         current.date = value.date;
@@ -211,7 +268,7 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
                         isAllDay: value.isAllDay
                       );
                       final (:canBeAdded, :conflicting) = TimeSlotService()
-                        .canBeAdded(ts)
+                        .canBeAdded(ts, widget.timeSlot?.id)
                       ;
 
                       String? msg;
@@ -272,9 +329,13 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
                     return null;
                   },
                 ),
-                if (canNotNotify) SwitchListTileFormField(
+                if (Functionality.canNotNotify.show(
+                  mode: mode,
+                  value: canNotNotify
+                )) SwitchListTileFormField(
                   initialValue: doNotNotify,
                   autovalidateMode: autovalidateMode,
+                  enabled: Functionality.canNotNotify.isEditable(isEditing),
                   title: Text(
                     tr(context)!.screen_create_switch_do_not_notify
                   ),
@@ -284,11 +345,15 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
                     });
                   },
                 ),
-                if (canActivateAutoOpen) SwitchListTileFormField(
+                if (Functionality.autoOpen.show(
+                  mode: mode,
+                  value: canActivateAutoOpen
+                )) SwitchListTileFormField(
                   initialValue: current.autoOpen,
                   autovalidateMode: autovalidateMode,
+                  enabled: Functionality.autoOpen.isEditable(isEditing),
                   title: Text(
-                      tr(context)!.screen_create_switch_auto_open_close
+                    tr(context)!.screen_create_switch_auto_open_close
                   ),
                   onChanged: (value) {
                     setState(() {
@@ -299,7 +364,9 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
                 const SizedBox(height: 32),
                 OutlinedButton(
                   child: Text(
-                    tr(context)!.screen_create_switch_perform
+                    isEditing
+                      ? tr(context)!.screen_edit_perform
+                      : tr(context)!.screen_create_perform
                   ),
                   onPressed: () async {
                     // Validate returns true if the form is valid, or false otherwise.
@@ -337,7 +404,79 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
     );
   }
 
-  Future<void> _doOnPressed(BuildContext context) async {
+  Future<void> _doOnPressed(BuildContext context) => isEditing
+    ? _doUpdate(context)
+    : _doAdd(context)
+  ;
+
+  Future<void> _doUpdate(BuildContext context) async {
+    bool sendMessage;
+    Message? msg;
+
+    TimeSlot t0 = widget.timeSlot!;
+
+    //
+    // Update date, if needed
+    //
+    if (current.isAllDay) {
+      current.date = current.date.toDayDate(); // -> 0h
+      current.duration = const Duration(hours: 24);
+    }
+
+    //
+    // Check potential changes in date
+    //
+
+    final Map<String, Object?> values = {
+      if (current.isAllDay != t0.isAllDay)
+        'is_all_day': current.isAllDay,
+      if (current.date.compareTo(t0.date) != 0)
+        'date': current.date,
+      if (current.duration.compareTo(t0.duration) != 0)
+        'duration': current.duration.inMinutes
+    };
+
+    // If any change in date, let's ack users
+    sendMessage = values.isNotEmpty;
+
+    //
+    // Other managed changes
+    //
+
+    String comment = current.message ?? '';
+    if (comment != t0.message) {
+      values['message'] = comment.isEmpty
+        ? FieldValue.delete()
+        : comment
+      ;
+    }
+
+    //
+    // Message to send
+    //
+
+    if (sendMessage) {
+      msg = t0.timeUpdateMessage(context, current);
+    }
+
+    //
+    // main job
+    //
+
+    if (values.isNotEmpty) {
+      await TimeSlotService()
+        .update(t0.id, values)
+        .then((_) {
+          if (msg != null) {
+            _doSendMessage(msg);
+          }
+        })
+      ;
+    }
+
+  }
+
+  Future<void> _doAdd(BuildContext context) async {
     //Last update: Update the time slot to create
     // (admin, act as club, creator)
     TimeSlot timeSlotSeed = _prepareSeed();
@@ -367,12 +506,14 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
 
     await TimeSlotService()
       .setAll(timeSlots)
-      .then((_) {
-        if (!doNotNotify) {
-          MessagesService().send(message);
-        }
-      })
+      .then((_) => _doSendMessage(message))
     ;
+  }
+
+  Future<void> _doSendMessage(Message message) async {
+    if (!doNotNotify) {
+      MessagesService().send(message);
+    }
   }
 
   TimeSlot _prepareSeed() {
@@ -383,9 +524,6 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
         ? TimeSlotStatus.ok
         : TimeSlotStatus.awaiting
     ;
-
-    // Act as club ?
-    String? ownerId = AdminService().actAsClub ? clubId : null;
 
     DateTime? date;
     Duration? duration;
@@ -405,7 +543,6 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
     }
 
     return current.copyWith(
-      ownerId: ownerId,
       status: status,
       date: date,
       duration: duration

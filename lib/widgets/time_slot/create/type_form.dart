@@ -32,6 +32,7 @@ class _TypeFormState extends State<TypeForm>{
   Widget build(BuildContext context) {
     return Center(
       child: DropdownMenuFormField<TimeSlotType>(
+        enabled: widget.types.length > 1,
         leadingIcon: Icon(selected.icon, color: selected.color),
         requestFocusOnTap: false,
         inputDecorationTheme: const InputDecorationTheme(

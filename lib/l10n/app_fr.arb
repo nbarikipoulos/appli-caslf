@@ -19,6 +19,7 @@
 
   "confirm": "confirmer",
   "delete": "supprimer",
+  "edit": "éditer",
 
   "open": "ouvrir",
   "close": "fermé",
@@ -69,7 +70,10 @@
   "screen_create_switch_do_not_notify": "Ne pas notifier",
   "screen_create_switch_auto_open_close": "Ouvrir/Fermer automatiquement",
   "screen_create_switch_all_day": "Toute la journée",
-  "screen_create_switch_perform": "Ajouter",
+  "screen_create_perform": "Ajouter",
+
+  "screen_edit_title": "Éditer un créneau",
+  "screen_edit_perform": "Modifier",
 
   "screen_quick_create_open_title": "Ouvrir Immédiatement",
   "screen_quick_create_open_where": "Quel Lieu?",
@@ -136,6 +140,10 @@
 
   "message_new_timeslots_title": "Nouveaux créneaux au {location}",
   "message_new_timeslots_body": "Les {days} du {date_begin} au {date_end}, {schedule}.",
+
+  "message_updated_timeslot_title": "Modification: {date} au {location}",
+  "message_updated_ask_new_timeslot_title": "Demande mise à jour: {date} au {location}",
+  "message_updated_timeslot_body" : "Nouvel horaire: {schedule_new};\nancien: {schedule_old}.",
 
   "guest_message_timeslot" : "Vous êtes connecté en tant qu'invité: Le créneau ne sera pas créé."
 }

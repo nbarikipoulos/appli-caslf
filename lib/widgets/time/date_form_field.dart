@@ -4,6 +4,7 @@ import 'package:caslf/widgets/time/extended_text_controller.dart';
 import 'package:flutter/material.dart';
 
 class DateFormField extends StatefulWidget {
+  final bool enabled;
   final DateTimeEditingController? controller;
   final DateTime? initialDate;
   final DateTime? lastDate;
@@ -13,6 +14,7 @@ class DateFormField extends StatefulWidget {
   final FormFieldValidator<DateTime>? validator;
 
   const DateFormField({
+    this.enabled = true,
     this.controller,
     this.initialDate,
     this.lastDate,
@@ -58,6 +60,7 @@ class DateFormFieldState extends State<DateFormField> {
 
   @override
   Widget build(BuildContext context) => TextFormField(
+    enabled: widget.enabled,
     controller: controller,
     autovalidateMode: widget.autovalidateMode,
     readOnly: true,

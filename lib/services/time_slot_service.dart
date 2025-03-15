@@ -31,7 +31,10 @@ class TimeSlotService with ChangeNotifier implements Service {
     return init();
   }
 
-  ({bool canBeAdded, TimeSlot? conflicting}) canBeAdded(TimeSlot timeSlot) {
+  ({bool canBeAdded, TimeSlot? conflicting}) canBeAdded(
+    TimeSlot timeSlot,
+    [String? id] // For editing mode, aka the current timeslot id.
+  ) {
     var day = timeSlot.date.toDayDate();
 
     // Get timeSlots of the days and filter with location
@@ -54,15 +57,21 @@ class TimeSlotService with ChangeNotifier implements Service {
     TimeSlot? current;
     while (isOk && it.moveNext()) {
       current = it.current;
-      var currentStart = current.date;
-      var currentEnd = current.end;
-      isOk = end.compareTo(currentStart) <= 0
-        || start.compareTo(currentEnd) >= 0
-        && !(
-          start.compareTo(currentStart) <= 0
-          && end.compareTo(currentEnd) >=0
-        )
-      ;
+
+      if (
+        id == null
+        || current.id != id
+      ) {
+        var currentStart = current.date;
+        var currentEnd = current.end;
+        isOk = end.compareTo(currentStart) <= 0
+          || start.compareTo(currentEnd) >= 0
+          && !(
+            start.compareTo(currentStart) <= 0
+            && end.compareTo(currentEnd) >= 0
+          )
+        ;
+      }
     }
 
     return (
@@ -99,7 +108,7 @@ class TimeSlotService with ChangeNotifier implements Service {
 
   Future<void> update(
     String id,
-    Map<String, Object> values
+    Map<String, Object?> values
   ) => _db.collection(_collectionId)
     .doc(id)
     .update(values)

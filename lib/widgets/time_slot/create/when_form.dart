@@ -16,6 +16,7 @@ class WhenForm extends StatefulWidget {
   final DateTime initialDate;
   final Duration initialDuration;
   final bool allowAllDay;
+  final bool canChangeDay;
   final void Function (WhenFormData data) onChanged;
   final AutovalidateMode? autovalidateMode;
   final String? Function(WhenFormData data)? validator;
@@ -25,6 +26,7 @@ class WhenForm extends StatefulWidget {
     required this.initialDate,
     required  this.initialDuration,
     this.allowAllDay = false,
+    this.canChangeDay = true,
     required this.onChanged,
     this.autovalidateMode,
     this.validator
@@ -52,6 +54,7 @@ class _WhenFormState extends State<WhenForm>{
     return Wrap(
       children: [
         DateFormField(
+          enabled: widget.canChangeDay,
           initialDate: widget.initialDate,
           lastDate: null,
           autovalidateMode: widget.autovalidateMode,

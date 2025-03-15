@@ -14,6 +14,9 @@ class GrantService implements Service {
 
   GrantService({required this.adminService});
 
+  //FIXME, use singleton approach (check proxied behavior)
+  factory GrantService.get() => GrantService(adminService: AdminService());
+
   //
   // All available grants below
   //
@@ -32,13 +35,20 @@ class GrantService implements Service {
   bool canDeleteTimeSlot(TimeSlot timeSlot) =>
     _userGrant.type != UserType.guest
     && (
-      timeSlot.ownerId == _user.uid
-      || (
+      (
+        timeSlot.ownerId == _user.uid
+        && timeSlot.confirmedBy == null // Do not delete confirmed TimeSlot
+      ) || (
         timeSlot.ownerId == clubId &&
         actAsClub
       )
       || adminService.isAdminMode
     )
+  ;
+
+  bool canEditTimeSlot(TimeSlot timeSlot) =>
+    canDeleteTimeSlot(timeSlot)
+    || timeSlot.confirmedBy == _user.uid // Acceptor can edit a timeSlot
   ;
 
   bool get canNotNotify => adminService.isAdminMode || actAsClub;

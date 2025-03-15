@@ -68,7 +68,7 @@ extension TimeSlotExtension on TimeSlot {
       DateTime? end, // idem
       List<Day>? days // re...
     }) {
-    var localization = context.localization;
+    final localization = context.localization;
 
     bool shouldBeConfirmed = TimeSlotStatus.awaiting == status;
 
@@ -86,17 +86,8 @@ extension TimeSlotExtension on TimeSlot {
     String body;
 
     String locationLabel = localization.location(location.name);
-    
-    final [timeStart, timeEnd] = [date, this.end].map((date) => TimeOfDay
-      .fromDateTime(date)
-      .toHHMM()
-    ).toList();
 
-    var scheduleLabel = isAllDay
-      ? localization.all_day
-      : localization.time_slot_from_to(timeStart, timeEnd)
-    ;
-
+    final scheduleLabel = timeRangeLabel(context, this);
 
     if (recurrent) {
       // title
@@ -123,7 +114,7 @@ extension TimeSlotExtension on TimeSlot {
     } else {
       // title
 
-      var f = shouldBeConfirmed
+      final f = shouldBeConfirmed
         ? localization.message_ask_new_timeslot_title
         : switch(type) {
           TimeSlotType.common => localization.message_new_timeslot_title,
@@ -133,7 +124,7 @@ extension TimeSlotExtension on TimeSlot {
         }
       ;
 
-      var arg = type == TimeSlotType.event
+      final arg = type == TimeSlotType.event
         ? message!
         : locationLabel
       ;
@@ -142,11 +133,7 @@ extension TimeSlotExtension on TimeSlot {
 
       // body
 
-      var dateLabel = switch(DayType.getType(date)) {
-        DayType.today => localization.today,
-        DayType.tomorrow => localization.tomorrow,
-        _ => date.getDayAsString(),
-      }.toCapitalized;
+      final dateLabel = dayDateLabel(context, date);
 
       body = switch(type) {
         TimeSlotType.common ||
@@ -170,11 +157,60 @@ extension TimeSlotExtension on TimeSlot {
     );
   }
 
+  Message timeUpdateMessage(
+    BuildContext context,
+    TimeSlot newTimeSlot
+  ) {
+    final localization = context.localization;
+
+    final channelType = newTimeSlot.status == TimeSlotStatus.awaiting
+      ? ChannelType.askFor
+      : ChannelType.newSlot
+    ;
+
+    final channelId = Channel.computeId(
+      type: channelType,
+      location: location
+    );
+
+    final locationLabel = localization.location(newTimeSlot.location.name);
+
+    final dateLabel = dayDateLabel(context, date);
+
+    final scheduleLabelOld = timeRangeLabel(context, this);
+    final scheduleLabelNew = timeRangeLabel(context, newTimeSlot);
+
+    // title
+
+    final f = switch(channelType) {
+      ChannelType.askFor => localization.message_updated_ask_new_timeslot_title,
+      (_) => localization.message_updated_timeslot_title
+    };
+
+    final title = Function.apply(
+      f,
+      [dateLabel, locationLabel]
+    );
+
+    // body
+
+    final body = localization.message_updated_timeslot_body(
+      scheduleLabelNew,
+      scheduleLabelOld
+    );
+
+    return Message.create(
+      channelId: channelId,
+      title: title,
+      body: body
+    );
+  }
+
   Message openCloseMessage(
     BuildContext context,
     { required LocationAction action }
   ) {
-    var localization = context.localization;
+    final localization = context.localization;
 
     final channelId = Channel.computeId(
       type: ChannelType.openClose,
@@ -184,10 +220,14 @@ extension TimeSlotExtension on TimeSlot {
     final locationLabel = localization.location(location.name);
     final locationStatusLabel = localization.location_status(action.name);
 
+    // title
+
     final title = localization.message_open_close_title(
       locationLabel.toCapitalized,
       locationStatusLabel
     );
+
+    // body
 
     final body = switch(action) {
       LocationAction.open => localization.message_open_body(
@@ -205,3 +245,36 @@ extension TimeSlotExtension on TimeSlot {
 
 }
 
+String dayDateLabel(
+  BuildContext context,
+  DateTime date
+) => switch(DayType.getType(date)) {
+  DayType.today => context.localization.today,
+  DayType.tomorrow => context.localization.tomorrow,
+  _ => date.getDayAsString(),
+}.toCapitalized;
+
+String timeRangeLabel(
+  BuildContext context,
+  TimeSlot timeSlot
+) {
+  String result;
+
+  final localization = context.localization;
+
+  if (timeSlot.isAllDay) {
+    result = localization.all_day;
+  } else {
+    final [timeStart, timeEnd] = [
+      timeSlot.date,
+      timeSlot.end
+    ].map((date) => TimeOfDay
+      .fromDateTime(date)
+      .toHHMM()
+    ).toList();
+
+    result = localization.time_slot_from_to(timeStart, timeEnd);
+  }
+
+ return result;
+}

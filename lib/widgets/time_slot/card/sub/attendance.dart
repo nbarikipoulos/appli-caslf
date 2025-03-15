@@ -52,7 +52,7 @@ class _AttendanceState extends State<Attendance> {
 
   Future<void> _onPressed(BuildContext context) async {
     var attendees = widget.timeSlot.attendees;
-    Map<String, Object>? data;
+    Map<String, Object?> data = {};
     Message? message;
 
     if (_action == _Action.join) {
@@ -82,7 +82,7 @@ class _AttendanceState extends State<Attendance> {
 
     await TimeSlotService().update(
       widget.timeSlot.id,
-      data! // can not be null
+      data
     );
 
     if (message != null) {

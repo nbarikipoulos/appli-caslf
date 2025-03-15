@@ -2,7 +2,7 @@ import 'package:caslf/constants.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/models/time_slot/time_slot_status.dart';
 import 'package:caslf/models/time_slot/time_slot_type.dart';
-import 'package:caslf/services/admin_service.dart';
+import 'package:caslf/router/app_router.dart';
 import 'package:caslf/services/grant_service.dart';
 import 'package:caslf/services/time_slot_service.dart';
 import 'package:caslf/services/user_service.dart';
@@ -61,7 +61,7 @@ class TimeSlotCard extends StatelessWidget implements TimeSlotWidget {
 
     return GestureDetector(
       onLongPressStart: (value) {
-        if (_canBeDeleted()) {
+        if (_canBeDeleted || _canBeEdited) {
           _showMenu(context, value.globalPosition);
         }
       },
@@ -104,9 +104,8 @@ class TimeSlotCard extends StatelessWidget implements TimeSlotWidget {
     );
   }
 
-  bool _canBeDeleted() => GrantService(
-    adminService: AdminService()
-  ).canDeleteTimeSlot(timeSlot);
+  bool get _canBeEdited => GrantService.get().canEditTimeSlot(timeSlot);
+  bool get _canBeDeleted => GrantService.get().canDeleteTimeSlot(timeSlot);
 
   void _showMenu(BuildContext context, Offset offset) {
     final RenderObject overlay = Overlay.of(context)
@@ -117,7 +116,20 @@ class TimeSlotCard extends StatelessWidget implements TimeSlotWidget {
     showMenu(
       context: context,
       items: [
-        PopupMenuItem(
+        if (_canBeEdited) PopupMenuItem(
+          child: Row(children: [
+            const Icon(Icons.edit),
+            const SizedBox(width: 8),
+            Text(tr(context)!.edit)
+          ]),
+          onTap: () => NavigationHelper()
+            .router
+            .goNamed(
+              NavigationHelper().edit.name,
+              extra: timeSlot
+            )
+        ),
+        if (_canBeDeleted) PopupMenuItem(
           child: Row(children: [
             const Icon(Icons.delete_outlined),
             const SizedBox(width: 8),

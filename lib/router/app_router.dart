@@ -1,3 +1,4 @@
+import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/screens/auth/login_page.dart';
 import 'package:caslf/screens/auth/reset_password_page.dart';
 import 'package:caslf/screens/new_time_slot/create_time_slot_page.dart';
@@ -40,6 +41,7 @@ class NavigationHelper {
 
   final timeSlots = (path: '/timeSlots', name: 'timeSlots');
   final add = (path: 'add', name: 'add');
+  final edit = (path: 'edit', name: 'edit');
   final addAndOpen = (path: 'addAndOpen', name: 'addAndOpen');
 
   final news = (path: '/news', name: 'news');
@@ -100,6 +102,17 @@ class NavigationHelper {
                       child: const CreateTimeSlotPage(),
                       state: state
                     )
+                  ),
+                  GoRoute(
+                    path: edit.path,
+                    name: edit.name,
+                    pageBuilder: (context, state) {
+                      TimeSlot timeSlot = state.extra as TimeSlot;
+                      return getPage(
+                        child: CreateTimeSlotPage(timeSlot: timeSlot),
+                        state: state
+                      );
+                    }
                   ),
                   GoRoute(
                     path: addAndOpen.path,
