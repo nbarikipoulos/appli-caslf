@@ -41,7 +41,7 @@ Disponible actuellement en tant qu'application mobile, PWA ou site web.
 
 (*) En PWA sous Android, les notifications semblent pleinement fonctionnelles à partir d'Android 13 (à vérifier plus finement).
 
-(**) En PWA sous iOS Les notifications nécessitent une verison iOS supérieure ou égale à la 17.5.
+(**) En PWA sous iOS Les notifications nécessitent une verison iOS supérieure ou égale à la 16.4 *i.e.* est compatible pour les iPhone à partir des modèles 8 et SE de seconde génération, à vérifier pour les iPad.
 
 De plus, pour que les notifications soient opérationnelles, un serveur back est nécessaire (disponible [ici][caslf-appli-server-url]).
 
