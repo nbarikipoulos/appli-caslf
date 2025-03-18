@@ -6,6 +6,9 @@ import 'package:caslf/router/app_router.dart';
 import 'package:caslf/services/grant_service.dart';
 import 'package:caslf/services/time_slot_service.dart';
 import 'package:caslf/services/user_service.dart';
+import 'package:caslf/theme/theme_utils.dart'
+  show primary;
+import 'package:caslf/utils/time_slot_utils.dart';
 import 'package:caslf/widgets/localization.dart';
 import 'package:caslf/widgets/time_slot/card/details_part.dart';
 import 'package:caslf/widgets/time_slot/card/header_part.dart';
@@ -135,7 +138,12 @@ class TimeSlotCard extends StatelessWidget implements TimeSlotWidget {
             const SizedBox(width: 8),
             Text(tr(context)!.delete)
           ]),
-          onTap: () => TimeSlotService().delete(timeSlot),
+          onTap: () => _dialogBuilder(context)
+            .then( (bool? perform) {
+              if (perform ?? false) {
+                TimeSlotService().delete(timeSlot);
+              }
+            })
         )
       ],
       position: RelativeRect.fromRect(
@@ -155,4 +163,35 @@ class TimeSlotCard extends StatelessWidget implements TimeSlotWidget {
     );
   }
 
+  Future<bool?> _dialogBuilder(BuildContext context) {
+    final title = tr(context)!.time_slot_delete_dialog_title;
+
+    final content = tr(context)!.time_slot_delete_dialog_content(
+      dayDateLabel(context, timeSlot.date),
+      tr(context)!.location(timeSlot.location.name),
+      timeRangeLabel(context, timeSlot)
+    );
+
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text(title, style: TextStyle(color: primary)),
+        content: Text(content),
+        actions: [
+          TextButton(
+            child: Text(tr(context)!.cancel),
+            onPressed: () {
+              Navigator.pop(context, false);
+            }
+          ),
+          TextButton(
+            child: Text(tr(context)!.delete),
+            onPressed: () {
+              Navigator.pop(context, true);
+            }
+          )
+         ]
+      )
+    );
+  }
 }

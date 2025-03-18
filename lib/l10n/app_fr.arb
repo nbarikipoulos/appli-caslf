@@ -15,11 +15,15 @@
   "tooltip_leave_time_slot": "se retirer",
   "attendees": "{n, plural, zero{Aucun archer} one{1 archer attendu} other{{n} archers attendus}}",
 
+  "time_slot_delete_dialog_title": "Suppression",
+  "time_slot_delete_dialog_content": "Créneau au {location}.\n{day}, {time}.",
+
   "ok" : "OK",
 
   "confirm": "confirmer",
   "delete": "supprimer",
   "edit": "éditer",
+  "cancel": "annuler",
 
   "open": "ouvrir",
   "close": "fermer",
