@@ -120,6 +120,7 @@
   "screen_about_authorization": "Notification:",
   "screen_about_fcm_token": "Jeton FCM:",
   "screen_about_advanced_mode": "Mode avancé",
+  "screen_about_activate_advanced_mode_tooltip": "Mode avancé: tapotez encore {count} fois",
 
   "advanced_mode_activate": "Activer le mode avancé",
   "use_alternative_channels": "Utiliser des canaux alternatifs",

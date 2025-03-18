@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:caslf/services/application_service.dart';
 import 'package:caslf/services/messaging/fcm_init_service.dart';
+import 'package:caslf/theme/theme_utils.dart'
+  show primary;
 import 'package:caslf/widgets/advanced/advanced_mode.dart';
 import 'package:caslf/widgets/heading_item.dart';
 import 'package:caslf/widgets/localization.dart';
@@ -28,9 +30,16 @@ class _AboutPageState extends State<AboutPage> {
   String? fcmToken;
   AuthorizationStatus? authStatus;
 
-  late bool _showExtra; // aka display on user's action
+  late bool showExtra; // aka display on user's action
   late int count;
-  Timer? _timer;
+  final int countDisplayMessage = 3;
+  final int countMax = 7;
+
+  Timer? timer;
+  final Duration delayForActivation =  const Duration(seconds: 30);
+
+  final GlobalKey<TooltipState> tooltipKey = GlobalKey<TooltipState>();
+  late bool onWayToAdvancedMode;
 
   final bool isWeb = ApplicationService().isWeb;
 
@@ -38,8 +47,9 @@ class _AboutPageState extends State<AboutPage> {
   void initState() {
     super.initState();
     _future = _init();
-    _showExtra = ApplicationService().isAdvancedMode;
+    showExtra = ApplicationService().isAdvancedMode;
     count = 0;
+    onWayToAdvancedMode = false;
   }
 
   @override
@@ -85,32 +95,60 @@ class _AboutPageState extends State<AboutPage> {
                 InkWell(
                   hoverColor: Colors.transparent,
                   mouseCursor: SystemMouseCursors.basic,
-                  onTap: () {
-                    if(isAdvancedMode) { // Early exit
-                      return;
-                    }
-                    _timer ??= Timer(
-                      const Duration(seconds: 30),
-                      () { setState(() {
-                        if (context.mounted) count = 0;});
+                  onTap: !showExtra ? () {
+                    timer ??= Timer(
+                      delayForActivation,
+                      () {
+                        setState(() {
+                          if (context.mounted) count = 0;
+                        });
                       }
                     );
 
                     setState(() {
                       count++;
-                      if (count == 7) {
-                        _timer?.cancel();
-                        _timer = null;
+
+                      if (
+                        count == countDisplayMessage
+                      ) {
+                        onWayToAdvancedMode = true;
+                        tooltipKey.currentState?.ensureTooltipVisible();
+                      } else if (
+                        count > countDisplayMessage && count < countMax
+                      ) {
+                        tooltipKey.currentState?.ensureTooltipVisible();
+                      } else if (
+                        count == countMax
+                      ) {
+                        timer?.cancel();
+                        timer = null;
                         count = 0;
-                        _showExtra = !_showExtra;
+                        showExtra = !showExtra;
                       }
                     });
-                  },
-                  child: Column(
-                    children: f(
-                      tr(context)!.screen_about_version,
-                      version!
-                    )
+                  } : null,
+                  child: TooltipVisibility(
+                    visible: !showExtra && onWayToAdvancedMode,
+                    child: Tooltip(
+                      key: tooltipKey,
+                      triggerMode: TooltipTriggerMode.manual,
+                      preferBelow: true,
+                      message: tr(context)!
+                        .screen_about_activate_advanced_mode_tooltip(
+                          countMax - count
+                        ),
+                      textStyle: TextStyle(color: Colors.white),
+                      decoration: BoxDecoration(
+                        color: primary,
+                        borderRadius: BorderRadius.circular(4)
+                      ),
+                      child: Column(
+                        children: f(
+                          tr(context)!.screen_about_version,
+                          version!
+                        )
+                      ),
+                    ),
                   )
                 ),
                 ...[(
@@ -143,7 +181,7 @@ class _AboutPageState extends State<AboutPage> {
                   ),
                   const Divider()
                 ],
-                if (isAdvancedMode || _showExtra) ...[
+                if (isAdvancedMode || showExtra) ...[
                   const SizedBox(height: 16.0),
                   Center(
                     child: HeadingItem(
@@ -176,4 +214,9 @@ class _AboutPageState extends State<AboutPage> {
 
   }
 
+  @override
+  void dispose() async {
+    timer?.cancel();
+    super.dispose();
+  }
 }
