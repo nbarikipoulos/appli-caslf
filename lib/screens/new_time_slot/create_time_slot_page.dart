@@ -266,6 +266,7 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
                     initialDate: current.date,
                     initialDuration: current.duration,
                     allowAllDay: mode == CreatedBy.club,
+                    isAllDay: current.isAllDay,
                     canChangeDay: !isEditing,
                     onChanged: (WhenFormData value) {
                       setState(() {

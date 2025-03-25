@@ -16,6 +16,7 @@ class WhenForm extends StatefulWidget {
   final DateTime initialDate;
   final Duration initialDuration;
   final bool allowAllDay;
+  final bool isAllDay;
   final bool canChangeDay;
   final void Function (WhenFormData data) onChanged;
   final AutovalidateMode? autovalidateMode;
@@ -26,6 +27,7 @@ class WhenForm extends StatefulWidget {
     required this.initialDate,
     required  this.initialDuration,
     this.allowAllDay = false,
+    this.isAllDay = false,
     this.canChangeDay = true,
     required this.onChanged,
     this.autovalidateMode,
@@ -42,7 +44,7 @@ class _WhenFormState extends State<WhenForm>{
   late bool isAllDay;
 
   late DurationEditingController _durationController;
-  bool _hasInitialDurationChanged = false;
+  bool _hasDurationChanged = false;
 
   @override
   void initState() {
@@ -50,7 +52,7 @@ class _WhenFormState extends State<WhenForm>{
 
     selectedDate = widget.initialDate;
     selectedDuration = widget.initialDuration;
-    isAllDay = false;
+    isAllDay = widget.isAllDay;
 
     _durationController = DurationEditingController(
       initialValue: widget.initialDuration
@@ -104,7 +106,10 @@ class _WhenFormState extends State<WhenForm>{
             // initialDuration: widget.initialDuration,
             autovalidateMode: widget.autovalidateMode,
             onChanged: (Duration duration) {
-              setState(() { selectedDuration = duration; });
+              setState(() {
+                selectedDuration = duration;
+                _hasDurationChanged = true;
+              });
               widget.onChanged.call(_data());
             },
             validator: (value) {
@@ -144,14 +149,19 @@ class _WhenFormState extends State<WhenForm>{
     final oldInitialDuration = oldWidget.initialDuration;
     final newInitialDuration = widget.initialDuration;
 
-    _hasInitialDurationChanged = oldInitialDuration
+    bool hasInitialDurationChanged = oldInitialDuration
       .compareTo(newInitialDuration) != 0
     ;
 
-    if (_hasInitialDurationChanged) {
+
+
+    if (hasInitialDurationChanged) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           _durationController.data = newInitialDuration;
+          if (!_hasDurationChanged) {
+            selectedDuration = newInitialDuration;
+          }
         }
       });
     }
