@@ -16,7 +16,6 @@ import 'package:caslf/widgets/time_slot/card/header_part.dart';
 import 'package:caslf/widgets/time_slot/card/sub/message.dart';
 import 'package:caslf/widgets/time_slot/time_slot_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class TimeSlotCard extends StatelessWidget implements TimeSlotWidget {
   final TimeSlot _timeSlot;
@@ -31,10 +30,6 @@ class TimeSlotCard extends StatelessWidget implements TimeSlotWidget {
 
   @override
   Widget build(BuildContext context) {
-    final shouldConfirmDeletion = context.select<PreferencesService, bool>(
-      (service) => service.confirmTimeSlotDeletion
-    );
-
     bool isAwaiting = timeSlot.status == TimeSlotStatus.awaiting;
 
     const awaitingColor = Colors.orange;

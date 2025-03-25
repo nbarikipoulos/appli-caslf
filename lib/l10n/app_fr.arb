@@ -87,7 +87,7 @@
   "screen_settings_item_user": "Archer",
   "screen_settings_item_appearance": "Apparences",
   "screen_settings_item_notification": "Notifications",
-  "screen_settings_item_default": "Réglages par défaut",
+  "screen_settings_item_default": "Valeurs par défaut",
   "screen_settings_item_admin": "Administration",
   "screen_settings_item_about": "À propos",
   "screen_settings_admin_item_board_title": "Mode CASLF",
@@ -111,8 +111,9 @@
   "screen_notification_ask_for": "s'abonner aux demandes de créneaux",
   "screen_notification_news": "s'abonner aux nouvelles",
 
-  "screen_default_title": "Réglages par défaut",
+  "screen_default_title": "Valeurs par défaut",
   "screen_default_time_slot_subtitle": "Créneaux",
+  "screen_default_duration_subtitle": "Durées par défaut",
   "screen_default_confirm_deletion_title": "Confirmer la suppression des créneaux",
   "screen_default_confirm_deletion_subtitle": "Affiche une fenêtre de confirmation avant suppression",
 

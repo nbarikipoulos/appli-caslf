@@ -8,6 +8,7 @@ import 'package:caslf/models/time_slot/time_slot_type.dart';
 import 'package:caslf/services/admin_service.dart';
 import 'package:caslf/services/grant_service.dart';
 import 'package:caslf/services/messages_service.dart';
+import 'package:caslf/services/preferences_service.dart';
 import 'package:caslf/services/time_service.dart';
 import 'package:caslf/services/time_slot_service.dart';
 import 'package:caslf/services/user_service.dart';
@@ -83,6 +84,7 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
   late TimeSlot current;
   late CreatedBy mode;
 
+  bool _durationHasBeenChanged = false;
 
   bool recurrent = false;
   late WhensFormData recurrentData;
@@ -92,15 +94,19 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
 
   final _formKey = GlobalKey<FormState>();
 
+  final _locationT0 = Location.ground;
+
   TimeSlot get defaultTimeSlot => TimeSlot(
     ownerId: user.uid,
-    location: Location.ground,
+    location: _locationT0,
     type: TimeSlotType.common,
     extra: {},
     date: TimeService().next,
-    duration: const Duration(hours: 2),
+    duration: PreferencesService().getDefaultDurationFor(
+      _locationT0
+    ),
     isAllDay: false,
-    status: user.hasAccessTo(Location.ground)
+    status: user.hasAccessTo(_locationT0)
       ? TimeSlotStatus.ok
       : TimeSlotStatus.awaiting
   );
@@ -111,7 +117,7 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
       .add(Duration(days: 14)),
     days: [Day.monday],
     timeOfDay: const TimeOfDay(hour: 18, minute: 30),
-    duration: const Duration(hours: 4)
+    duration: PreferencesService().getDefaultDurationFor(_locationT0)
   );
 
   @override
@@ -158,6 +164,8 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
 
     if (!isRecurrentAllowed) { recurrent = false; }
 
+    if (!canActivateAutoOpen) { current.autoOpen = false; }
+
     if (!isEditing) {
       if (actAsClub) {
         mode = CreatedBy.club;
@@ -170,8 +178,6 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
         current.extra?.add(TimeSlotExtra.casual);
       }
     }
-
-    if (!canActivateAutoOpen) { current.autoOpen = false; }
 
     return Scaffold(
         appBar: AppBar(
@@ -203,6 +209,17 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
                   onChanged: (Location value) {
                     setState(() {
                       current.location = value;
+                      if (!_durationHasBeenChanged) {
+                        final duration = _getDefaultDuration(value);
+                        current.duration = duration;
+                        recurrentData = ( // FIXME ugly...
+                          start: recurrentData.start,
+                          end: recurrentData.end,
+                          days: recurrentData.days,
+                          timeOfDay: recurrentData.timeOfDay,
+                          duration: duration
+                        );
+                      }
                     });
                   }
                 ),
@@ -253,7 +270,10 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
                     onChanged: (WhenFormData value) {
                       setState(() {
                         current.date = value.date;
-                        current.duration = value.duration;
+                        if (current.duration != value.duration) {
+                          current.duration = value.duration;
+                          _durationHasBeenChanged = true;
+                        }
                         current.isAllDay = value.isAllDay;
                       });
                     },
@@ -298,6 +318,12 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
                     onChanged: (WhensFormData value) {
                       setState(() {
                         recurrentData = value;
+                        if (
+                          !_durationHasBeenChanged &&
+                          value.duration != _getDefaultDuration()
+                        ) {
+                          _durationHasBeenChanged = true;
+                        }
                       });
                     }
                   ),
@@ -403,6 +429,10 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
       )
     );
   }
+
+  Duration _getDefaultDuration([Location? location]) => PreferencesService()
+    .getDefaultDurationFor(location ?? current.location)
+  ;
 
   Future<void> _doOnPressed(BuildContext context) => isEditing
     ? _doUpdate(context)
@@ -519,10 +549,10 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
   TimeSlot _prepareSeed() {
     // Status: admin/club does not need acknowledge!
     TimeSlotStatus status = user.hasAccessTo(current.location)
-        || AdminService().isAdminMode
-        || AdminService().actAsClub
-        ? TimeSlotStatus.ok
-        : TimeSlotStatus.awaiting
+      || AdminService().isAdminMode
+      || AdminService().actAsClub
+      ? TimeSlotStatus.ok
+      : TimeSlotStatus.awaiting
     ;
 
     DateTime? date;

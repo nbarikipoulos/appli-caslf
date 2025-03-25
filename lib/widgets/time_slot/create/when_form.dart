@@ -41,12 +41,20 @@ class _WhenFormState extends State<WhenForm>{
   late Duration selectedDuration;
   late bool isAllDay;
 
+  late DurationEditingController _durationController;
+  bool _hasInitialDurationChanged = false;
+
   @override
   void initState() {
     super.initState();
+
     selectedDate = widget.initialDate;
     selectedDuration = widget.initialDuration;
     isAllDay = false;
+
+    _durationController = DurationEditingController(
+      initialValue: widget.initialDuration
+    );
   }
 
   @override
@@ -92,7 +100,8 @@ class _WhenFormState extends State<WhenForm>{
             }
           )
           ,DurationFormField(
-            initialDuration: widget.initialDuration,
+            controller: _durationController,
+            // initialDuration: widget.initialDuration,
             autovalidateMode: widget.autovalidateMode,
             onChanged: (Duration duration) {
               setState(() { selectedDuration = duration; });
@@ -128,4 +137,29 @@ class _WhenFormState extends State<WhenForm>{
     isAllDay: isAllDay
   );
 
+  @override
+  void didUpdateWidget(covariant WhenForm oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    final oldInitialDuration = oldWidget.initialDuration;
+    final newInitialDuration = widget.initialDuration;
+
+    _hasInitialDurationChanged = oldInitialDuration
+      .compareTo(newInitialDuration) != 0
+    ;
+
+    if (_hasInitialDurationChanged) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _durationController.data = newInitialDuration;
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _durationController.dispose();
+    super.dispose();
+  }
 }

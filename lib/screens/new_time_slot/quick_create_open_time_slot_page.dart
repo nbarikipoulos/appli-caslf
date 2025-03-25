@@ -9,6 +9,7 @@ import 'package:caslf/services/admin_service.dart';
 import 'package:caslf/services/grant_service.dart';
 import 'package:caslf/services/location_status_service.dart';
 import 'package:caslf/services/messages_service.dart';
+import 'package:caslf/services/preferences_service.dart';
 import 'package:caslf/services/time_service.dart';
 import 'package:caslf/services/time_slot_service.dart';
 import 'package:caslf/services/user_service.dart';
@@ -45,13 +46,20 @@ class QuickCreateOpenTimeSlotPageState extends State<QuickCreateOpenTimeSlotPage
 
   final _formKey = GlobalKey<FormState>();
 
+  final _locationT0 = Location.ground;
+
+  late DurationEditingController _durationController;
+  bool _durationHasBeenChanged = false;
+
   TimeSlot get defaultTimeSlot => TimeSlot(
     ownerId: user.uid,
-    location: Location.ground,
+    location: _locationT0,
     type: TimeSlotType.common,
     extra: { TimeSlotExtra.casual },
     date: Precision.adjustDate(TimeService().now),
-    duration: const Duration(hours: 2),
+    duration: PreferencesService().getDefaultDurationFor(
+      _locationT0
+    ),
     status: TimeSlotStatus.ok
   );
 
@@ -61,6 +69,10 @@ class QuickCreateOpenTimeSlotPageState extends State<QuickCreateOpenTimeSlotPage
 
     current = defaultTimeSlot.copyWith(
       ownerId: user.uid
+    );
+
+    _durationController = DurationEditingController(
+      initialValue: current.duration
     );
   }
 
@@ -94,6 +106,13 @@ class QuickCreateOpenTimeSlotPageState extends State<QuickCreateOpenTimeSlotPage
                   onChanged: (Location value) {
                     setState(() {
                       current.location = value;
+                      if (!_durationHasBeenChanged) {
+                        final duration = PreferencesService()
+                          .getDefaultDurationFor(value)
+                        ;
+                        current.duration = duration;
+                        _durationController.data = duration;
+                      }
                     });
                   }
                 ),
@@ -104,10 +123,14 @@ class QuickCreateOpenTimeSlotPageState extends State<QuickCreateOpenTimeSlotPage
                   )
                 ),
                 DurationFormField(
-                  initialDuration: current.duration,
+                  controller: _durationController,
+                  // initialDuration: current.duration,
                   autovalidateMode: autovalidateMode,
                   onChanged: (Duration duration) {
-                    setState(() { current.duration = duration; });
+                    setState(() {
+                      current.duration = duration;
+                      _durationHasBeenChanged = true;
+                    });
                   },
                   validator: (value) {
                     if (value!.inMinutes == 0) {
@@ -197,5 +220,10 @@ class QuickCreateOpenTimeSlotPageState extends State<QuickCreateOpenTimeSlotPage
     : user.grant?.accesses ?? []
   ;
 
+  @override
+  void dispose() {
+    _durationController.dispose();
+    super.dispose();
+  }
 }
 

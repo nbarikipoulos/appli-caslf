@@ -1,3 +1,4 @@
+import 'package:caslf/models/location/location.dart';
 import 'package:caslf/services/service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,10 +11,18 @@ class PreferencesService with ChangeNotifier implements Service {
 
   ThemeMode _mode = ThemeMode.system;
   bool _confirmTimeSlotDeletion = true;
+  final _locationDurations = <Location, Duration>{};
+
+  final _defaultDurationInMinutes = 120;
 
   final SharedPreferencesAsync _asyncPrefs = SharedPreferencesAsync();
   final String _themePrefId = 'theme';
   final String _confirmTimeSlotDeletionId = 'confirm_time_slot_deletion';
+  String _getLocationDurationId(Location location) => [
+    location.name,
+    'duration'
+  ].join('_');
+
 
   ThemeMode get themeMode => _mode;
   set themeMode (ThemeMode value) {
@@ -35,6 +44,27 @@ class PreferencesService with ChangeNotifier implements Service {
     }
   }
 
+  Duration getDefaultDurationFor(Location location) =>
+    _locationDurations[location]!
+  ;
+  void setDefaultDurationFor(Location location, Duration value) {
+    if ( // early exit
+      value.compareTo(_locationDurations[location]!) == 0
+    ) {
+      return;
+    }
+
+    _locationDurations[location] = value;
+
+    // No need to wait
+    _asyncPrefs.setInt(
+      _getLocationDurationId(location),
+      value.inMinutes
+    );
+
+    notifyListeners();
+  }
+
   @override
   Future<void> init() async {
     // Theme
@@ -51,8 +81,22 @@ class PreferencesService with ChangeNotifier implements Service {
       confirmTimeSlotDeletion = shouldConfirmDeletion;
     }
 
+    // Default duration for locations
+    await Future.wait(
+      Location.values.map((location) async {
+        final id = _getLocationDurationId(location);
+        int? value = await _asyncPrefs.getInt(id); // in minutes
+        _locationDurations[location] = Duration(
+          minutes: value ?? _defaultDurationInMinutes
+        );
+      }
+    ));
   }
 
   @override
-  Future<void> clear() => Future.value();
+  Future<void> clear() {
+    _locationDurations.clear();
+
+    return Future.value();
+  }
 }
