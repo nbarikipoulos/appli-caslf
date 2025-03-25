@@ -70,7 +70,7 @@ class SettingsPage extends StatelessWidget {
           runSpacing: 8,
           children: [
             _createGroup(context, ['user']),
-            _createGroup(context, ['appearance' /*, 'defaults' */]),
+            _createGroup(context, ['appearance', 'defaults']),
             _createGroup(context, ['notifications']),
             _createAdminAndCoGroup(context),
             _createGroup(context, ['about']),

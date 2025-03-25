@@ -4,6 +4,7 @@ import 'package:caslf/models/time_slot/time_slot_status.dart';
 import 'package:caslf/models/time_slot/time_slot_type.dart';
 import 'package:caslf/router/app_router.dart';
 import 'package:caslf/services/grant_service.dart';
+import 'package:caslf/services/preferences_service.dart';
 import 'package:caslf/services/time_slot_service.dart';
 import 'package:caslf/services/user_service.dart';
 import 'package:caslf/theme/theme_utils.dart'
@@ -15,6 +16,7 @@ import 'package:caslf/widgets/time_slot/card/header_part.dart';
 import 'package:caslf/widgets/time_slot/card/sub/message.dart';
 import 'package:caslf/widgets/time_slot/time_slot_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class TimeSlotCard extends StatelessWidget implements TimeSlotWidget {
   final TimeSlot _timeSlot;
@@ -29,6 +31,10 @@ class TimeSlotCard extends StatelessWidget implements TimeSlotWidget {
 
   @override
   Widget build(BuildContext context) {
+    final shouldConfirmDeletion = context.select<PreferencesService, bool>(
+      (service) => service.confirmTimeSlotDeletion
+    );
+
     bool isAwaiting = timeSlot.status == TimeSlotStatus.awaiting;
 
     const awaitingColor = Colors.orange;
@@ -138,8 +144,11 @@ class TimeSlotCard extends StatelessWidget implements TimeSlotWidget {
             const SizedBox(width: 8),
             Text(tr(context)!.delete)
           ]),
-          onTap: () => _dialogBuilder(context)
-            .then( (bool? perform) {
+          onTap: () => (
+            PreferencesService().confirmTimeSlotDeletion
+              ? _dialogBuilder(context)
+              : Future.value(true)
+            ).then( (bool? perform) {
               if (perform ?? false) {
                 TimeSlotService().delete(timeSlot);
               }
