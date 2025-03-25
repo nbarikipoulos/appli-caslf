@@ -264,7 +264,10 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
                   ? WhenForm(
                     autovalidateMode: autovalidateMode,
                     initialDate: current.date,
-                    initialDuration: current.duration,
+                    initialDuration: isEditing && current.isAllDay
+                      ? _getDefaultDuration() // Avoid 24h displaying
+                      : current.duration
+                    ,
                     allowAllDay: mode == CreatedBy.club,
                     isAllDay: current.isAllDay,
                     canChangeDay: !isEditing,
