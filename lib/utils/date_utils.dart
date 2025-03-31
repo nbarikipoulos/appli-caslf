@@ -45,15 +45,15 @@ enum DayType {
   later;
 
   static DayType getType(DateTime date) {
-    int delta = -1 * DateTime
-      .now()
-      .toDayDate()
-      .difference(date)
+    DateTime toDayDateUTC(DateTime d) => DateTime.utc(d.year, d.month,d.day);
+
+    int delta = toDayDateUTC(date)
+      .difference(toDayDateUTC(DateTime.now()))
       .inDays
     ;
 
     return switch (delta) {
-      <0 => DayType.before,
+      < 0 => DayType.before,
       0 => DayType.today,
       1 => DayType.tomorrow,
       _ => DayType.later
