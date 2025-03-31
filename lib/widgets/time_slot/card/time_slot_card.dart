@@ -9,6 +9,8 @@ import 'package:caslf/services/time_slot_service.dart';
 import 'package:caslf/services/user_service.dart';
 import 'package:caslf/theme/theme_utils.dart'
   show primary;
+import 'package:caslf/utils/date_utils.dart';
+import 'package:caslf/utils/string_utils.dart';
 import 'package:caslf/utils/time_slot_utils.dart';
 import 'package:caslf/widgets/localization.dart';
 import 'package:caslf/widgets/time_slot/card/details_part.dart';
@@ -171,7 +173,7 @@ class TimeSlotCard extends StatelessWidget implements TimeSlotWidget {
     final title = tr(context)!.time_slot_delete_dialog_title;
 
     final content = tr(context)!.time_slot_delete_dialog_content(
-      dayDateLabel(context, timeSlot.date),
+      dayDateLabel(context, timeSlot.date).toCapitalized,
       tr(context)!.location(timeSlot.location.name),
       timeRangeLabel(context, timeSlot)
     );

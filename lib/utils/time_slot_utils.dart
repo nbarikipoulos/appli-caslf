@@ -133,7 +133,7 @@ extension TimeSlotExtension on TimeSlot {
 
       // body
 
-      final dateLabel = dayDateLabel(context, date);
+      final dateLabel = dayDateLabel(context, date).toCapitalized;
 
       body = switch(type) {
         TimeSlotType.common ||
@@ -175,7 +175,7 @@ extension TimeSlotExtension on TimeSlot {
 
     final locationLabel = localization.location(newTimeSlot.location.name);
 
-    final dateLabel = dayDateLabel(context, date);
+    final dateLabel = dayDateLabel(context, date).toCapitalized;
 
     final scheduleLabelOld = timeRangeLabel(context, this);
     final scheduleLabelNew = timeRangeLabel(context, newTimeSlot);
@@ -244,15 +244,6 @@ extension TimeSlotExtension on TimeSlot {
   }
 
 }
-
-String dayDateLabel(
-  BuildContext context,
-  DateTime date
-) => switch(DayType.getType(date)) {
-  DayType.today => context.localization.today,
-  DayType.tomorrow => context.localization.tomorrow,
-  _ => date.getDayAsString(),
-}.toCapitalized;
 
 String timeRangeLabel(
   BuildContext context,

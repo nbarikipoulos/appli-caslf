@@ -1,3 +1,4 @@
+import 'package:caslf/widgets/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -61,3 +62,12 @@ enum DayType {
   }
 
 }
+
+String dayDateLabel(
+  BuildContext context,
+  DateTime date
+) => switch(DayType.getType(date)) {
+  DayType.today => context.localization.today,
+  DayType.tomorrow => context.localization.tomorrow,
+  _ => date.getDayAsString(),
+};
