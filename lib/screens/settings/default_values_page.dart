@@ -1,5 +1,6 @@
 import 'package:caslf/models/location/location.dart';
 import 'package:caslf/services/preferences_service.dart';
+import 'package:caslf/utils/string_utils.dart';
 import 'package:caslf/widgets/heading_item.dart';
 import 'package:caslf/widgets/localization.dart';
 import 'package:caslf/widgets/time/duration_form_field.dart';
@@ -31,6 +32,7 @@ class _DefaultValuesPageState extends State<DefaultValuesPage> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(8.0),
           child: Column(
+            spacing: 16,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Center(
@@ -38,30 +40,21 @@ class _DefaultValuesPageState extends State<DefaultValuesPage> {
                   title: tr(context)!.screen_default_time_slot_subtitle
                 ),
               ),
-              // Divider(color: primary),
               Text(
                 tr(context)!.screen_default_duration_subtitle
               ),
-              SizedBox(height: 16),
-              _duration(
-                context,
-                Location.ground
+              ...Location.helper.values.map(
+                (location) => _duration(context, location)
               ),
-              SizedBox(height: 16),
-              _duration(
-                context,
-                Location.gymnasium
+              Text(
+                tr(context)!.misc.toCapitalized
               ),
-              SizedBox(height: 16),
-              Text('Misc.'),
-              SizedBox(height: 16),
               _confirmDeletion(context, shouldConfirmDeletion)
             ],
           )
         ),
       ),
     );
-    // );
   }
 
   Widget _confirmDeletion(
