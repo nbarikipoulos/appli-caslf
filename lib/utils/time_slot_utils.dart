@@ -120,7 +120,8 @@ extension TimeSlotExtension on TimeSlot {
           TimeSlotType.common => localization.message_new_timeslot_title,
           TimeSlotType.event => localization.message_event_title,
           TimeSlotType.maintenance => localization.message_maintenance_title,
-          TimeSlotType.closed => localization.message_closed_title
+          TimeSlotType.closed => localization.message_closed_title,
+          TimeSlotType.unknown => throw UnimplementedError() // could not happen
         }
       ;
 
@@ -147,6 +148,7 @@ extension TimeSlotExtension on TimeSlot {
           locationLabel,
           scheduleLabel
         ),
+        TimeSlotType.unknown => throw UnimplementedError() // could not happen
       };
     }
 

@@ -227,7 +227,7 @@ class MessagesService extends ChangeNotifier implements Service {
     // Channels for locations
     //
 
-    for (var loc in Location.values) {
+    for (var loc in Location.helper.values) {
       result.addAll([
         Channel(
           type: ChannelType.newSlot,

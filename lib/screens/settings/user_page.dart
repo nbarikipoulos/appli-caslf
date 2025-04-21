@@ -84,7 +84,7 @@ class _UserPageState extends State<UserPage> {
     ;
 
     return Column(
-        children: Location.values.map((location) {
+        children: Location.helper.values.map((location) {
           return ListTile(
             leading: Icon(
               location.icon,

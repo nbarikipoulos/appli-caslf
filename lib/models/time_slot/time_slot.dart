@@ -37,7 +37,6 @@ class TimeSlot implements Comparable<TimeSlot> {
     required this.status,
     this.confirmedBy,
     this.attendees
-
   });
 
   DateTime get end => date.add(duration);
@@ -110,11 +109,11 @@ class TimeSlot implements Comparable<TimeSlot> {
     return TimeSlot(
       id: id,
       ownerId: data?['owner_id'],
-      location: Location.values.byName(data?['location']),
-      type: TimeSlotType.values.byName(data?['type']),
+      location: Location.helper.byName(data?['location']),
+      type: TimeSlotType.helper.byName(data?['type']),
       extra: listMapper<TimeSlotExtra>(
         data?['extra'],
-        (v) => TimeSlotExtra.values.byName(v)
+        (v) => TimeSlotExtra.helper.byName(v)
       )?.toSet(),
       date: data?['date'].toDate(),
       duration: Duration(minutes: data?['duration']),

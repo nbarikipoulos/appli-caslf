@@ -46,7 +46,7 @@ class UserGrant {
       ),
       accesses: listMapper(
         data?['accesses'],
-        (v) => Location.values.byName(v)
+        (v) => Location.helper.byName(v)
       ),
       canActAsClub: data?['can_act_as_club'],
       isAdmin: data?['is_admin'],

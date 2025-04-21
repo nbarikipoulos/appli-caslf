@@ -73,7 +73,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
     // FIXME To improve...
 
     final Map<Location, List<Channel>> locations = {
-      for (var location in Location.values)
+      for (var location in Location.helper.values)
         location : channels.where((channel) => channel.location == location).toList()
     };
 

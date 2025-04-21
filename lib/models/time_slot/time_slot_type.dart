@@ -1,8 +1,10 @@
 import 'package:caslf/theme/theme_utils.dart'
   show primary;
+import 'package:caslf/utils/enum_helper.dart';
 import 'package:flutter/material.dart';
 
 enum TimeSlotType {
+  unknown(icon: Icons.warning_amber, color: Colors.red),
   common(icon: Icons.schedule, color: primary),
   event(icon: Icons.celebration, color: Colors.pinkAccent),
   maintenance(icon: Icons.construction, color: Colors.brown),
@@ -15,5 +17,10 @@ enum TimeSlotType {
     required this.icon,
     required this.color
   });
+
+  static final EnumHelper<TimeSlotType> helper = EnumHelper(
+    TimeSlotType.values,
+    TimeSlotType.unknown
+  );
 
 }

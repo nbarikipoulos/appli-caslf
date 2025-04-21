@@ -216,7 +216,7 @@ class QuickCreateOpenTimeSlotPageState extends State<QuickCreateOpenTimeSlotPage
   }
 
   List<Location> _getLocations() => AdminService().isAdminMode
-    ? Location.values
+    ? Location.helper.values
     : user.grant?.accesses ?? []
   ;
 

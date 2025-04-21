@@ -203,7 +203,7 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
                 ),
                 WhereForm(
                   locations: Functionality.location.isEditable(isEditing)
-                    ? Location.values
+                    ? Location.helper.values
                     : [current.location],
                   initialValue: current.location,
                   onChanged: (Location value) {
@@ -232,7 +232,7 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
                   ),
                   TypeForm(
                     types: Functionality.type.isEditable(isEditing)
-                      ? TimeSlotType.values
+                      ? TimeSlotType.helper.values
                       : [current.type],
                     initialValue: current.type,
                     onChanged: (value) {

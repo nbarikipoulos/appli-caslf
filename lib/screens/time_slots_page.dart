@@ -31,7 +31,7 @@ class TimeSlotsPage extends StatelessWidget {
             children: [
               Row(
                 children:
-                  Location.values.map((location) => Expanded(
+                  Location.helper.values.map((location) => Expanded(
                     child: Selector<LocationStatusService, LocationStatus>(
                       selector: (_, service) => service
                         .locationStatuses[location]!,

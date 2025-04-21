@@ -83,7 +83,7 @@ class PreferencesService with ChangeNotifier implements Service {
 
     // Default duration for locations
     await Future.wait(
-      Location.values.map((location) async {
+      Location.helper.values.map((location) async {
         final id = _getLocationDurationId(location);
         int? value = await _asyncPrefs.getInt(id); // in minutes
         _locationDurations[location] = Duration(
