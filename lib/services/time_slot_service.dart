@@ -31,14 +31,14 @@ class TimeSlotService with ChangeNotifier implements Service {
     return init();
   }
 
-  ({bool canBeAdded, TimeSlot? conflicting}) canBeAdded(
-    TimeSlot timeSlot,
-    [String? id] // For editing mode, aka the current timeslot id.
-  ) {
-    var day = timeSlot.date.toDayDate();
+  ({
+    bool canBeAdded,
+    TimeSlot? conflicting
+  }) canBeAdded(TimeSlot timeSlot) {
+    final day = timeSlot.date.toDayDate();
 
     // Get timeSlots of the days and filter with location
-    var tss = timeSlots[day]
+    final tss = timeSlots[day]
       ?.where((ts) => ts.location == timeSlot.location)
       ?? []
     ;
@@ -49,8 +49,10 @@ class TimeSlotService with ChangeNotifier implements Service {
       return (canBeAdded: true, conflicting: null);
     }
 
-    var start = timeSlot.date;
-    var end = timeSlot.end;
+    final [start, end] = [
+      timeSlot.date,
+      timeSlot.end
+    ];
 
     bool isOk = true;
     var it = tss.iterator;
@@ -58,12 +60,9 @@ class TimeSlotService with ChangeNotifier implements Service {
     while (isOk && it.moveNext()) {
       current = it.current;
 
-      if (
-        id == null
-        || current.id != id
-      ) {
-        var currentStart = current.date;
-        var currentEnd = current.end;
+      if (current.id != timeSlot.id) {
+        final currentStart = current.date;
+        final currentEnd = current.end;
         isOk = end.compareTo(currentStart) <= 0
           || start.compareTo(currentEnd) >= 0
           && !(

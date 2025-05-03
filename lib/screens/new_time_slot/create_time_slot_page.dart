@@ -125,7 +125,8 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
     super.initState();
 
     if (isEditing) {
-      current = widget.timeSlot!.copyWith();
+      TimeSlot edited = widget.timeSlot!;
+      current = edited.copyWith(id: edited.id);
     } else {
       current = defaultTimeSlot.copyWith(
         ownerId: AdminService().actAsClub ? clubId : user.uid
@@ -283,6 +284,7 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
                     },
                     validator: (WhenFormData value) {
                       TimeSlot ts = current.copyWith(
+                        id: current.id,
                         date: value.isAllDay
                           ? value.date.toDayDate()
                           : value.date,
@@ -292,7 +294,7 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
                         isAllDay: value.isAllDay
                       );
                       final (:canBeAdded, :conflicting) = TimeSlotService()
-                        .canBeAdded(ts, widget.timeSlot?.id)
+                        .canBeAdded(ts)
                       ;
 
                       String? msg;

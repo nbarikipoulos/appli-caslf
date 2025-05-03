@@ -67,7 +67,10 @@ class TimeSlot implements Comparable<TimeSlot> {
     return result;
   }
 
+  // Note if no id is provided,
+  // a timeSlot with id set to 'dummyId' will be created
   TimeSlot copyWith({
+    String? id,
     String? ownerId,
     Location? location,
     TimeSlotType? type,
@@ -81,6 +84,7 @@ class TimeSlot implements Comparable<TimeSlot> {
     String? confirmedBy,
     Set<String>? attendees
   }) => TimeSlot(
+    id: id ?? dummyId,
     ownerId: ownerId ?? this.ownerId,
     location: location ?? this.location,
     type: type ?? this.type,
