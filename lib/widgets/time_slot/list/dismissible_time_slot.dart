@@ -3,13 +3,14 @@ import 'package:caslf/models/location/location_action.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/services/location_status_service.dart';
 import 'package:caslf/services/messages_service.dart';
+import 'package:caslf/services/time_service.dart';
 import 'package:caslf/utils/time_slot_utils.dart';
 import 'package:caslf/widgets/localization.dart';
 import 'package:caslf/widgets/time_slot/time_slot_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class DismissibleTimeSlot extends StatelessWidget {
+class DismissibleTimeSlot extends StatefulWidget {
   final TimeSlotWidget child;
 
   const DismissibleTimeSlot({
@@ -17,8 +18,32 @@ class DismissibleTimeSlot extends StatelessWidget {
     required this.child
   });
 
-  TimeSlot get _timeSlot => child.timeSlot;
+  @override
+  State<DismissibleTimeSlot> createState() => _DismissibleTimeSlotState();
+}
+
+class _DismissibleTimeSlotState extends State<DismissibleTimeSlot>
+  with WidgetsBindingObserver {
+  late String _key;
+
+  TimeSlot get _timeSlot => widget.child.timeSlot;
   Location get _location => _timeSlot.location;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    _key = widget.child.timeSlot.id;
+    super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      setState(() { // Enforce build
+        _key = 'a$_key';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +51,15 @@ class DismissibleTimeSlot extends StatelessWidget {
       (service) => service.locationStatuses[_location]!.isOpen
     );
 
-    final direction = switch(isCurrentlyOpen) {
-      true => DismissDirection.endToStart,
-      false => DismissDirection.startToEnd
-    };
+    var direction = DismissDirection.none;
+    if (isCurrentlyOpen) {
+      direction = DismissDirection.endToStart;
+    } else if (_timeSlot.end.isAfter(TimeService().now)) {
+      direction = DismissDirection.startToEnd;
+    }
 
     return Dismissible(
-      key: Key(child.timeSlot.id),
+      key: Key(_key),
       direction: direction,
       confirmDismiss: (direction) async {
         await LocationStatusService().toggleState(_location);
@@ -52,10 +79,10 @@ class DismissibleTimeSlot extends StatelessWidget {
         }
 
         return Future.value(false); // i.e. do not remove item at all
-      }, // Do not remove item at all
+      },
       background: _bgOpen(context),
       secondaryBackground: _bgClose(context),
-      child: child
+      child: widget.child
     );
   }
 
@@ -67,10 +94,10 @@ class DismissibleTimeSlot extends StatelessWidget {
   );
 
   Widget _bgClose(BuildContext context) => _background(
-      direction: DismissDirection.endToStart,
-      bgColor: Colors.redAccent,
-      icon: Icons.logout,
-      label: tr(context)!.close
+    direction: DismissDirection.endToStart,
+    bgColor: Colors.redAccent,
+    icon: Icons.logout,
+    label: tr(context)!.close
   );
 
   Widget _background({
@@ -83,23 +110,28 @@ class DismissibleTimeSlot extends StatelessWidget {
     margin: const EdgeInsets.symmetric(vertical: 4.0),
     padding: const EdgeInsets.symmetric(horizontal: 16.0),
     child: Row(
-        mainAxisAlignment: switch(direction) {
-          DismissDirection.startToEnd => MainAxisAlignment.start,
-          DismissDirection.endToStart => MainAxisAlignment.end,
-          (_) => MainAxisAlignment.center // ...
-        },
-        children: <Widget>[
-          Icon(
-            icon,
-            color: Colors.white,
-          ),
-          const SizedBox(width: 8.0),
-          Text(
-            label,
-            style: const TextStyle(color: Colors.white)
-          )
-        ]
-    ),
+      mainAxisAlignment: switch(direction) {
+        DismissDirection.startToEnd => MainAxisAlignment.start,
+        DismissDirection.endToStart => MainAxisAlignment.end,
+        (_) => MainAxisAlignment.center // ...
+      },
+      children: <Widget>[
+        Icon(
+          icon,
+          color: Colors.white,
+        ),
+        const SizedBox(width: 8.0),
+        Text(
+          label,
+          style: const TextStyle(color: Colors.white)
+        )
+      ]
+    )
   );
 
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 }
