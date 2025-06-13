@@ -1,5 +1,6 @@
 import 'package:caslf/models/location/location.dart';
 import 'package:caslf/services/preferences_service.dart';
+import 'package:caslf/services/rules_service.dart';
 import 'package:caslf/utils/string_utils.dart';
 import 'package:caslf/widgets/heading_item.dart';
 import 'package:caslf/widgets/localization.dart';
@@ -93,16 +94,15 @@ class _DefaultValuesPageState extends State<DefaultValuesPage> {
           size: 36
         )
       ),
-      onChanged: (Duration value) {
-        PreferencesService().setDefaultDurationFor(location, value);
+      onChanged: (Duration duration) {
+        PreferencesService().setDefaultDurationFor(location, duration);
       },
-      validator: (value) {
-        if (value!.inMinutes == 0) {
-          return tr(context)!.duration_is_zero;
-        }
-        return null;
-      }
+      validator: (Duration? duration) => RulesService()
+        .create(context)
+        .validate(
+          duration!,
+          'duration.zero'
+        )
     ),
   );
-
 }

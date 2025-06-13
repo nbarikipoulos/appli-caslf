@@ -1,4 +1,6 @@
+import 'package:caslf/services/rules_service.dart';
 import 'package:caslf/utils/date_utils.dart';
+import 'package:caslf/validator/rule_engine.dart';
 import 'package:caslf/widgets/localization.dart';
 import 'package:caslf/widgets/switch_list_tile_form.dart';
 import 'package:caslf/widgets/time/date_form_field.dart';
@@ -61,6 +63,8 @@ class _WhenFormState extends State<WhenForm>{
 
   @override
   Widget build(BuildContext context) {
+    RulesEngine ruleEngine = RulesService().create(context);
+
     return Wrap(
       children: [
         DateFormField(
@@ -75,12 +79,17 @@ class _WhenFormState extends State<WhenForm>{
             });
             widget.onChanged.call(_data());
           },
-          validator: (value) {
-            if (selectedDate.isBefore(DateTime.now())){
-              return tr(context)!.start_time_expired;
-            }
+          validator: (DateTime? date) {
+            String? msg;
 
-            return widget.validator?.call(_data());
+            msg = ruleEngine.validate(
+               selectedDate,
+              'date.time.is.before'
+            );
+
+            msg ??= widget.validator?.call(_data());
+
+            return msg;
           }
         ),
         if (!isAllDay) ...[
@@ -93,17 +102,19 @@ class _WhenFormState extends State<WhenForm>{
               });
               widget.onChanged.call(_data());
             },
-            validator: (value) {
-              if (selectedDate.isBefore(DateTime.now())){
-                return tr(context)!.start_time_expired;
-              }
+            validator: (TimeOfDay? time) {
+              String? msg = ruleEngine.validate(
+                selectedDate.copyWithTimeOfDay(time!),
+                'date.time.is.before'
+              );
 
-              return widget.validator?.call(_data());
+              msg ??= widget.validator?.call(_data());
+
+              return msg;
             }
           )
           ,DurationFormField(
             controller: _durationController,
-            // initialDuration: widget.initialDuration,
             autovalidateMode: widget.autovalidateMode,
             onChanged: (Duration duration) {
               setState(() {
@@ -112,12 +123,17 @@ class _WhenFormState extends State<WhenForm>{
               });
               widget.onChanged.call(_data());
             },
-            validator: (value) {
-              if (value!.inMinutes == 0) {
-                return tr(context)!.duration_is_zero;
-              }
+            validator: (Duration? duration) {
+              String? msg;
 
-              return widget.validator?.call(_data());
+              msg = ruleEngine.validate(
+                duration!,
+                'duration.zero'
+              );
+
+              msg ??= widget.validator?.call(_data());
+
+              return msg;
             }
         )],
         if (widget.allowAllDay) SwitchListTileFormField(
@@ -126,11 +142,11 @@ class _WhenFormState extends State<WhenForm>{
           title: Text(
             tr(context)!.screen_create_switch_all_day
           ),
-          onChanged: (value) {
+          onChanged: (bool value) {
             setState(() { isAllDay = value; });
             widget.onChanged.call(_data());
           },
-          validator: (value) => widget.validator?.call(_data())
+          validator: (bool? value) => widget.validator?.call(_data())
         )
       ] ,
     );

@@ -5,17 +5,18 @@ import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/models/time_slot/time_slot_extra.dart';
 import 'package:caslf/models/time_slot/time_slot_status.dart';
 import 'package:caslf/models/time_slot/time_slot_type.dart';
+import 'package:caslf/validator/rule_engine.dart';
 import 'package:caslf/services/admin_service.dart';
 import 'package:caslf/services/grant_service.dart';
 import 'package:caslf/services/location_status_service.dart';
 import 'package:caslf/services/messages_service.dart';
 import 'package:caslf/services/preferences_service.dart';
+import 'package:caslf/services/rules_service.dart';
 import 'package:caslf/services/time_service.dart';
 import 'package:caslf/services/time_slot_service.dart';
 import 'package:caslf/services/user_service.dart';
 import 'package:caslf/theme/theme_utils.dart'
   show primary;
-import 'package:caslf/utils/date_utils.dart';
 import 'package:caslf/utils/misc_utils.dart';
 import 'package:caslf/utils/string_utils.dart';
 import 'package:caslf/utils/time_slot_utils.dart';
@@ -78,6 +79,8 @@ class QuickCreateOpenTimeSlotPageState extends State<QuickCreateOpenTimeSlotPage
 
   @override
   Widget build(BuildContext context) {
+    RulesEngine ruleEngine = RulesService().create(context);
+
     return Scaffold(
         appBar: AppBar(
         title: MyTitle(
@@ -132,29 +135,19 @@ class QuickCreateOpenTimeSlotPageState extends State<QuickCreateOpenTimeSlotPage
                       _durationHasBeenChanged = true;
                     });
                   },
-                  validator: (value) {
-                    if (value!.inMinutes == 0) {
-                      return tr(context)!.duration_is_zero;
-                    }
-
-                    TimeSlot ts = current.copyWith(duration: value);
-                    final (:canBeAdded, :conflicting) = TimeSlotService()
-                      .canBeAdded(ts)
-                    ;
-
+                  validator: (duration) {
                     String? msg;
+                    TimeSlot ts = current.copyWith(duration: duration);
 
-                    if (!canBeAdded) {
-                      final [start, end] = [
-                        conflicting!.date,
-                        conflicting.end
-                      ].map((date) => TimeOfDay
-                        .fromDateTime(date)
-                        .toHHMM()
-                      ).toList();
+                    msg = ruleEngine.validate(
+                      duration,
+                      'duration.zero'
+                    );
 
-                      msg = tr(context)!.conflict_in_timeSlot(start, end);
-                    }
+                    msg ??= ruleEngine.validate(
+                      ts,
+                      'timeSlot.is.conflicting'
+                    );
 
                     return msg;
                   }
@@ -226,4 +219,3 @@ class QuickCreateOpenTimeSlotPageState extends State<QuickCreateOpenTimeSlotPage
     super.dispose();
   }
 }
-

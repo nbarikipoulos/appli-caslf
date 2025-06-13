@@ -5,10 +5,12 @@ import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/models/time_slot/time_slot_extra.dart';
 import 'package:caslf/models/time_slot/time_slot_status.dart';
 import 'package:caslf/models/time_slot/time_slot_type.dart';
+import 'package:caslf/validator/rule_engine.dart';
 import 'package:caslf/services/admin_service.dart';
 import 'package:caslf/services/grant_service.dart';
 import 'package:caslf/services/messages_service.dart';
 import 'package:caslf/services/preferences_service.dart';
+import 'package:caslf/services/rules_service.dart';
 import 'package:caslf/services/time_service.dart';
 import 'package:caslf/services/time_slot_service.dart';
 import 'package:caslf/services/user_service.dart';
@@ -180,6 +182,8 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
       }
     }
 
+    RulesEngine ruleEngine = RulesService().create(context);
+
     return Scaffold(
         appBar: AppBar(
         title: MyTitle(
@@ -293,25 +297,11 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
                           : value.duration,
                         isAllDay: value.isAllDay
                       );
-                      final (:canBeAdded, :conflicting) = TimeSlotService()
-                        .canBeAdded(ts)
-                      ;
 
-                      String? msg;
-
-                      if (!canBeAdded) {
-                        final [start, end] = [
-                          conflicting!.date,
-                          conflicting.end
-                        ].map((date) => TimeOfDay
-                          .fromDateTime(date)
-                          .toHHMM()
-                        ).toList();
-
-                        msg = tr(context)!.conflict_in_timeSlot(start, end);
-                      }
-
-                      return msg;
+                      return ruleEngine.validate(
+                        ts,
+                        'timeSlot.is.conflicting'
+                      );
                     }
                   )
                   : WhensForm(
@@ -345,21 +335,15 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
                     prefixIcon: const Icon(Icons.message)
                   ),
                   initialValue: current.message,
-                  onChanged: (value) {
+                  onChanged: (message) {
                     setState(() {
-                      current.message = value;
+                      current.message = message;
                     });
                   },
-                  validator: (value) {
-                    if (
-                      current.type == TimeSlotType.event
-                      && (value == null || value.isEmpty)
-                    ) {
-                      return tr(context)!.add_comment_event;
-                    }
-
-                    return null;
-                  },
+                  validator: (message) => ruleEngine.validate(
+                    current.copyWith(message: message),
+                    'timeSlot.event.has.comment'
+                  )
                 ),
                 if (Functionality.canNotNotify.show(
                   mode: mode,
@@ -584,6 +568,4 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
       duration: duration
     );
   }
-
 }
-

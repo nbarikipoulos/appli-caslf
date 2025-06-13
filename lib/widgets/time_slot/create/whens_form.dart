@@ -1,6 +1,8 @@
+import 'package:caslf/services/rules_service.dart';
 import 'package:caslf/utils/date_utils.dart';
 import 'package:caslf/utils/day.dart';
 import 'package:caslf/utils/string_utils.dart';
+import 'package:caslf/validator/rule_engine.dart';
 import 'package:caslf/widgets/localization.dart';
 import 'package:caslf/widgets/time/date_form_field.dart';
 import 'package:caslf/widgets/time/duration_form_field.dart';
@@ -68,45 +70,45 @@ class _WhensFormState extends State<WhensForm>{
 
   @override
   Widget build(BuildContext context) {
+    RulesEngine ruleEngine = RulesService().create(context);
+
     return Wrap(
       children: [
         DateFormField(
           initialDate: startDate,
           autovalidateMode: widget.autovalidateMode,
           lastDate: null,
-          onChanged: (DateTime date) {
-            startDate = date.toDayDate();
+          onChanged: (DateTime start) {
+            startDate = start.toDayDate();
             _onChanged();
           },
           decoration: InputDecoration(
             labelText: tr(context)!.start,
             prefixIcon: const Icon(Icons.first_page)
           ),
-          validator: (value) {
-            if (startDate.isAfter(endDate)){
-              return tr(context)!.start_end_days_inverted;
-            }
-            return null;
-          }
+          validator: (DateTime? start) => ruleEngine.validate(
+            start!.toDayDate(),
+            'date.time.days.inverted',
+            {'end_date': endDate}
+          )
         ),
         DateFormField(
           initialDate: endDate,
           lastDate: null,
           autovalidateMode: widget.autovalidateMode,
-          onChanged: (DateTime date) {
-            endDate = date.toDayDate();
+          onChanged: (DateTime end) {
+            endDate = end.toDayDate();
             _onChanged();
           },
           decoration: InputDecoration(
             labelText: tr(context)!.end,
             prefixIcon: const Icon(Icons.last_page)
           ),
-          validator: (value) {
-            if (startDate.isAfter(endDate)){
-              return tr(context)!.start_end_days_inverted;
-            }
-            return null;
-          }
+          validator: (DateTime? end) => ruleEngine.validate(
+            startDate,
+            'date.time.days.inverted',
+            {'end_date': end!}
+          )
         ),
         Center(
           child: Text(
@@ -121,12 +123,12 @@ class _WhensFormState extends State<WhensForm>{
           itemBuilder: (day) => Text(
             tr(context)!.day_short(day.name).toCapitalized
           ),
-          onPressed: (values) {
-            selectedDays = values;
+          onPressed: (List<Day> days) {
+            selectedDays = days;
             _onChanged();
           },
-          validator: (values) {
-            if (values is! Iterable || values!.isEmpty) {
+          validator: (List<Day>? days) {
+            if (days is! Iterable || days!.isEmpty) {
               return tr(context)!.select_at_least_one_day;
             }
             return null;
@@ -143,16 +145,15 @@ class _WhensFormState extends State<WhensForm>{
         const SizedBox(height: 8),
         DurationFormField(
           controller: _durationController,
-          // initialDuration: selectedDuration,
           autovalidateMode: widget.autovalidateMode,
           onChanged: (Duration duration) {
             selectedDuration = duration;
             _onChanged();
           },
-          validator: (value) {
-            if (value!.inMinutes == 0) return tr(context)!.duration_is_zero;
-            return null;
-          }
+          validator: (Duration? duration) => ruleEngine.validate(
+            duration,
+            'duration.zero'
+          )
         ),
       ] ,
     );

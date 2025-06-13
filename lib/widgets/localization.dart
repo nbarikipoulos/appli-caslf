@@ -18,3 +18,5 @@ extension StateLocalizationExt on State {
 extension CustomContext on BuildContext{
   AppLocalizations get localization => AppLocalizations.of(this)!;
 }
+
+AppLocalizations localization(BuildContext context) => context.localization;

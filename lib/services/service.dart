@@ -4,6 +4,7 @@ import 'package:caslf/services/location_status_service.dart';
 import 'package:caslf/services/messages_service.dart';
 import 'package:caslf/services/messaging/fcm_init_service.dart';
 import 'package:caslf/services/preferences_service.dart';
+import 'package:caslf/services/rules_service.dart';
 import 'package:caslf/services/time_service.dart';
 import 'package:caslf/services/time_slot_service.dart';
 import 'package:caslf/services/user_service.dart';
@@ -40,6 +41,7 @@ class ServicesHandler implements Service {
     await FcmInitService().init();
     await MessagesService().init();
     await TimeSlotService().init();
+    await RulesService().init();
 
     _initialized = true;
   }
@@ -50,6 +52,7 @@ class ServicesHandler implements Service {
     await MessagesService().clear();
     await TimeSlotService().clear();
     await AdminService().clear();
+    await RulesService().clear();
     await LocationStatusService().clear();
     await PreferencesService().clear();
     await UserService().clear();
