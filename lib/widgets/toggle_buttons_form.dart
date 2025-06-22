@@ -73,17 +73,12 @@ class _MyToggleButtonsState<T> extends State<MyToggleButtons<T>>{
 
   @override
   void initState() {
-    super.initState();
-
-    _selected = List<bool>.generate(
-      widget.values.length,
-      (_) => false
+    _selected = _initSelected(
+      widget.values,
+      widget.initialValues
     );
 
-    for (T sel in widget.initialValues) {
-      _selected[widget.values.indexOf(sel)] = true;
-    }
-
+    super.initState();
   }
 
   @override
@@ -115,4 +110,37 @@ class _MyToggleButtonsState<T> extends State<MyToggleButtons<T>>{
       .toList(),
   );
 
+  @override
+  void didUpdateWidget(covariant MyToggleButtons<T> oldWidget) {
+    if (
+      oldWidget.values.length !=
+      widget.values.length
+    ) {
+      _selected = _initSelected(
+        widget.values,
+        widget.initialValues
+      );
+    }
+
+    super.didUpdateWidget(oldWidget);
+  }
+
+  List<bool> _initSelected(
+    List<T> values,
+    List<T> initialValues
+  ) {
+    List<bool> result = List<bool>.generate(
+      widget.values.length,
+      (_) => false
+    );
+
+    for (T sel in widget.initialValues) {
+      int idx = widget.values.indexOf(sel);
+      if (idx >= 0) {
+        result[widget.values.indexOf(sel)] = true;
+      }
+    }
+
+    return result;
+  }
 }
