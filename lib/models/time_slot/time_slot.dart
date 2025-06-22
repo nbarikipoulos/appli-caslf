@@ -62,8 +62,10 @@ class TimeSlot implements Comparable<TimeSlot> {
   @override
   int compareTo(TimeSlot other) {
     var result = 0;
-    result += 10 * date.compareTo(other.date);
-    result += location.compareTo(other.location);
+    result += 100 * date.compareTo(other.date);
+    result += 10 * location.compareTo(other.location);
+    result += id.compareTo(other.id);
+
     return result;
   }
 
