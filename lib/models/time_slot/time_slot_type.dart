@@ -7,6 +7,7 @@ enum TimeSlotType {
   unknown(icon: Icons.warning_amber, color: Colors.red),
   common(icon: Icons.schedule, color: primary),
   event(icon: Icons.celebration, color: Colors.pinkAccent),
+  competition(icon: Icons.emoji_events, color: Colors.orangeAccent),
   maintenance(icon: Icons.construction, color: Colors.brown),
   closed(icon: Icons.block, color: Colors.red);
 

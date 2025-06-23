@@ -45,9 +45,11 @@ class TimeSlotCard extends StatelessWidget implements TimeSlotWidget {
       }
     ;
 
-    TextStyle? msgTextStyle = timeSlot.type == TimeSlotType.event
+    TextStyle? msgTextStyle =
+      timeSlot.type == TimeSlotType.event ||
+      timeSlot.type == TimeSlotType.competition
       ? TextStyle(
-        color: TimeSlotType.event.color,
+        color: timeSlot.type.color,
         fontWeight: FontWeight.bold
       ) : null
     ;

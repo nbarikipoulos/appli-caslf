@@ -135,6 +135,7 @@ extension TimeSlotExtension on TimeSlot {
         : switch(type) {
           TimeSlotType.common => localization.message_new_timeslot_title,
           TimeSlotType.event => localization.message_event_title,
+          TimeSlotType.competition => localization.message_competition_title,
           TimeSlotType.maintenance => localization.message_maintenance_title,
           TimeSlotType.closed => localization.message_closed_title,
           TimeSlotType.unknown => throw UnimplementedError() // could not happen
@@ -157,7 +158,8 @@ extension TimeSlotExtension on TimeSlot {
           dateLabel.toCapitalized,
           scheduleLabel
         ),
-        TimeSlotType.event => localization.message_event_body(
+        TimeSlotType.event ||
+        TimeSlotType.competition => localization.message_event_body(
           dateLabel.toCapitalized,
           locationLabel,
           scheduleLabel

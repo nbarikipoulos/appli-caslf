@@ -448,6 +448,7 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
 
   bool _isDescriptionMandatory(TimeSlot timeSlot) =>
     timeSlot.type == TimeSlotType.event ||
+    timeSlot.type == TimeSlotType.competition ||
     timeSlot.location == Location.external
   ;
 

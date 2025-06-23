@@ -26,7 +26,7 @@ class DefaultRules implements RuleProvider {
 
   void _init() {
     _add(_isConflicting);
-    _add(_msgNotNullForEvent);
+    _add(_msgFilled);
     _add(_locationFilled);
     _add(_duration0);
     _add(_isBefore);
@@ -63,12 +63,13 @@ Rule<TimeSlot> _isConflicting = RuleFactory().create<TimeSlot>(
   }
 );
 
-Rule<TimeSlot> _msgNotNullForEvent = RuleFactory().create<TimeSlot>(
+Rule<TimeSlot> _msgFilled = RuleFactory().create<TimeSlot>(
   'timeSlot.must.have.comment',
   (context, timeSlot, [parameters]) {
     String? message = timeSlot.message;
     bool commentRequired =
       timeSlot.type == TimeSlotType.event ||
+      timeSlot.type == TimeSlotType.competition ||
       timeSlot.location == Location.external
     ;
 
