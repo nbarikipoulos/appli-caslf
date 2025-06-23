@@ -1,3 +1,4 @@
+import 'package:caslf/extensions/time_slot/time_slot_ext.dart';
 import 'package:caslf/models/message/message.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/models/time_slot/time_slot_status.dart';
@@ -6,7 +7,6 @@ import 'package:caslf/models/user/user_type.dart';
 import 'package:caslf/services/messages_service.dart';
 import 'package:caslf/services/time_slot_service.dart';
 import 'package:caslf/services/user_service.dart';
-import 'package:caslf/utils/time_slot_utils.dart';
 import 'package:caslf/widgets/localization.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';

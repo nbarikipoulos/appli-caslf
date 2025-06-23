@@ -15,32 +15,32 @@ enum Precision {
   static TimeOfDay adjustTimeOfDay(TimeOfDay input, {
     Precision precision = defaultPrecision
   }) {
-      int minutes = adjustMinute(
-        input.minute,
-        precision: precision
-      );
+    int minutes = adjustMinute(
+      input.minute,
+      precision: precision
+    );
 
-      int hours = input.hour + minutes ~/ 60;
-      int mins = minutes % 60;
+    int hours = input.hour + minutes ~/ 60;
+    int mins = minutes % 60;
 
-      if (hours >= 24) {
-        hours = 23;
-        mins = 60 - precision.value;
-      }
+    if (hours >= 24) {
+      hours = 23;
+      mins = 60 - precision.value;
+    }
 
-      return input.replacing(
-        hour: hours,
-        minute: mins
-      );
+    return input.replacing(
+      hour: hours,
+      minute: mins
+    );
   }
 
   static DateTime adjustDate(DateTime input, {
     Precision precision = defaultPrecision
   }) => input.copyWith(
-      minute: adjustMinute(
-          input.minute,
-          precision: precision
-      )
+    minute: adjustMinute(
+      input.minute,
+      precision: precision
+    )
   );
 
   static Duration adjustDuration(Duration input, {

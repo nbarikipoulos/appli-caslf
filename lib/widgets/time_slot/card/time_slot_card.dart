@@ -1,4 +1,6 @@
 import 'package:caslf/constants.dart';
+import 'package:caslf/extensions/string_ext.dart';
+import 'package:caslf/extensions/time_slot/time_slot_ext.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/models/time_slot/time_slot_status.dart';
 import 'package:caslf/models/time_slot/time_slot_type.dart';
@@ -9,9 +11,7 @@ import 'package:caslf/services/time_slot_service.dart';
 import 'package:caslf/services/user_service.dart';
 import 'package:caslf/theme/theme_utils.dart'
   show primary;
-import 'package:caslf/utils/date_utils.dart';
-import 'package:caslf/utils/string_utils.dart';
-import 'package:caslf/utils/time_slot_utils.dart';
+import 'package:caslf/utils/day_type.dart';
 import 'package:caslf/widgets/localization.dart';
 import 'package:caslf/widgets/time_slot/card/details_part.dart';
 import 'package:caslf/widgets/time_slot/card/header_part.dart';

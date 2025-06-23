@@ -1,3 +1,4 @@
+import 'package:caslf/extensions/time_of_day_ext.dart';
 import 'package:caslf/models/location/location.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/models/time_slot/time_slot_extra.dart';
@@ -6,7 +7,6 @@ import 'package:caslf/models/time_slot/time_slot_type.dart';
 import 'package:caslf/services/admin_service.dart';
 import 'package:caslf/services/grant_service.dart';
 import 'package:caslf/services/user_service.dart';
-import 'package:caslf/utils/date_utils.dart';
 import 'package:caslf/widgets/localization.dart';
 import 'package:caslf/widgets/my_title.dart';
 import 'package:caslf/widgets/time_slot/card/sub/attendance.dart';

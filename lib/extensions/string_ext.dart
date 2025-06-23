@@ -11,5 +11,4 @@ extension StringCasingExtension on String {
   ;
 
   String append(String v, {separator = ''}) => '$this$separator$v';
-
 }

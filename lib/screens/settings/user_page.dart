@@ -1,9 +1,9 @@
+import 'package:caslf/extensions/string_ext.dart';
 import 'package:caslf/models/location/location.dart';
 import 'package:caslf/models/user/user_data.dart';
 import 'package:caslf/models/user/user_type.dart';
 import 'package:caslf/services/service.dart';
 import 'package:caslf/services/user_service.dart';
-import 'package:caslf/utils/string_utils.dart';
 import 'package:caslf/widgets/localization.dart';
 import 'package:caslf/widgets/misc.dart';
 import 'package:firebase_auth/firebase_auth.dart';

@@ -1,13 +1,14 @@
+import 'package:caslf/extensions/date_time_ext.dart';
 import 'package:caslf/models/time_slot/time_slot_type.dart';
 import 'package:caslf/services/admin_service.dart';
 import 'package:caslf/services/grant_service.dart';
 import 'package:caslf/services/time_service.dart';
 import 'package:caslf/services/time_slot_service.dart';
-import 'package:caslf/utils/date_utils.dart';
+import 'package:caslf/utils/day_type.dart';
 import 'package:caslf/widgets/time_slot/card/time_slot_card.dart';
+import 'package:caslf/widgets/time_slot/list/date_heading_item.dart';
 import 'package:caslf/widgets/time_slot/list/dismissible_time_slot.dart';
 import 'package:caslf/widgets/time_slot/list/empty_card.dart';
-import 'package:caslf/widgets/time_slot/list/date_heading_item.dart';
 import 'package:caslf/widgets/time_slot/time_slot_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

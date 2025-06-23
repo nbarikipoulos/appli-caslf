@@ -1,5 +1,5 @@
-import 'package:caslf/utils/date_utils.dart';
-import 'package:caslf/utils/string_utils.dart';
+import 'package:caslf/extensions/string_ext.dart';
+import 'package:caslf/utils/day_type.dart';
 import 'package:caslf/widgets/heading_item.dart';
 import 'package:flutter/material.dart';
 

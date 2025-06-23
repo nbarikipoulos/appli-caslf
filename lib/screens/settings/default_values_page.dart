@@ -1,7 +1,7 @@
+import 'package:caslf/extensions/string_ext.dart';
 import 'package:caslf/models/location/location.dart';
 import 'package:caslf/services/preferences_service.dart';
 import 'package:caslf/services/rules_service.dart';
-import 'package:caslf/utils/string_utils.dart';
 import 'package:caslf/widgets/heading_item.dart';
 import 'package:caslf/widgets/localization.dart';
 import 'package:caslf/widgets/time/duration_form_field.dart';

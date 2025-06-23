@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'dart:collection';
+
+import 'package:caslf/extensions/date_time_ext.dart';
 import 'package:caslf/models/location/location.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/models/time_slot/time_slot_status.dart';
 import 'package:caslf/services/service.dart';
 import 'package:caslf/services/time_service.dart';
-import 'package:caslf/utils/date_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 

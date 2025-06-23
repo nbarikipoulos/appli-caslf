@@ -1,4 +1,4 @@
-import 'package:caslf/utils/date_utils.dart';
+import 'package:caslf/extensions/date_time_ext.dart';
 import 'package:caslf/widgets/localization.dart';
 import 'package:caslf/widgets/time/extended_text_controller.dart';
 import 'package:flutter/material.dart';

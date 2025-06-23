@@ -1,8 +1,8 @@
 import 'dart:async';
 
+import 'package:caslf/extensions/date_time_ext.dart';
 import 'package:caslf/services/service.dart';
-import 'package:caslf/utils/date_utils.dart';
-import 'package:caslf/utils/time_utils.dart';
+import 'package:caslf/utils/time_adjust.dart';
 import 'package:flutter/material.dart';
 
 class TimeService with ChangeNotifier implements Service {

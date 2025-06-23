@@ -1,3 +1,6 @@
+import 'package:caslf/extensions/date_time_ext.dart';
+import 'package:caslf/extensions/string_ext.dart';
+import 'package:caslf/extensions/time_of_day_ext.dart';
 import 'package:caslf/models/location/location.dart';
 import 'package:caslf/models/location/location_action.dart';
 import 'package:caslf/models/message/channel.dart';
@@ -6,9 +9,8 @@ import 'package:caslf/models/message/message.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/models/time_slot/time_slot_status.dart';
 import 'package:caslf/models/time_slot/time_slot_type.dart';
-import 'package:caslf/utils/date_utils.dart';
+import 'package:caslf/utils/day_type.dart';
 import 'package:caslf/utils/day.dart';
-import 'package:caslf/utils/string_utils.dart';
 import 'package:caslf/widgets/localization.dart';
 import 'package:flutter/material.dart';
 

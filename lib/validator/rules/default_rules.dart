@@ -1,8 +1,8 @@
+import 'package:caslf/extensions/time_of_day_ext.dart';
 import 'package:caslf/models/location/location.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/models/time_slot/time_slot_type.dart';
 import 'package:caslf/services/time_slot_service.dart';
-import 'package:caslf/utils/date_utils.dart';
 import 'package:caslf/validator/rule.dart';
 import 'package:caslf/validator/rule_engine.dart';
 import 'package:caslf/validator/rule_factory.dart';

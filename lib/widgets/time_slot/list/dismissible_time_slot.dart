@@ -1,10 +1,10 @@
+import 'package:caslf/extensions/time_slot/time_slot_ext.dart';
 import 'package:caslf/models/location/location.dart';
 import 'package:caslf/models/location/location_action.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/services/location_status_service.dart';
 import 'package:caslf/services/messages_service.dart';
 import 'package:caslf/services/time_service.dart';
-import 'package:caslf/utils/time_slot_utils.dart';
 import 'package:caslf/widgets/localization.dart';
 import 'package:caslf/widgets/time_slot/time_slot_widget.dart';
 import 'package:flutter/material.dart';

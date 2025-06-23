@@ -1,9 +1,9 @@
+import 'package:caslf/extensions/string_ext.dart';
 import 'package:caslf/models/location/location.dart';
 import 'package:caslf/models/message/channel.dart';
 import 'package:caslf/models/message/channel_type.dart';
 import 'package:caslf/services/messages_service.dart';
 import 'package:caslf/services/messaging/fcm_init_service.dart';
-import 'package:caslf/utils/string_utils.dart';
 import 'package:caslf/widgets/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
