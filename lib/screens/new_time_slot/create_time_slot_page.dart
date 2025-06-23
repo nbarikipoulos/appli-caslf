@@ -219,6 +219,11 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
                   onChanged: (Location value) {
                     setState(() {
                       current.location = value;
+                      // Check type
+                      final types = _getAvailableTypesFor(current);
+                      if (!types.contains(current.type)) {
+                        current.type = types.first;
+                      }
                       if (!_durationHasBeenChanged) {
                         final duration = _getDefaultDuration(value);
                         current.duration = duration;
@@ -242,7 +247,7 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
                   ),
                   TypeForm(
                     types: Functionality.type.isEditable(isEditing)
-                      ? TimeSlotType.helper.values
+                      ? _getAvailableTypesFor(current)
                       : [current.type],
                     initialValue: current.type,
                     onChanged: (value) {
@@ -451,6 +456,12 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
     timeSlot.type == TimeSlotType.competition ||
     timeSlot.location == Location.external
   ;
+
+  List<TimeSlotType> _getAvailableTypesFor(TimeSlot timeSlot) =>
+    timeSlot.location == Location.external
+      ? [TimeSlotType.event, TimeSlotType.competition]
+      : TimeSlotType.helper.values
+    ;
 
   Future<void> _doOnPressed(BuildContext context) => isEditing
     ? _doUpdate(context)

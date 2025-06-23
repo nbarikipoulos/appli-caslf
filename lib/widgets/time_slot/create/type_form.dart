@@ -45,8 +45,8 @@ class _TypeFormState extends State<TypeForm>{
             value: type,
             label: tr(context)!.time_slot_type(type.name),
             leadingIcon: Icon(
-                type.icon,
-                color: type.color
+              type.icon,
+              color: type.color
             ),
           )
         ).toList(),
@@ -58,5 +58,13 @@ class _TypeFormState extends State<TypeForm>{
         }
       ),
     );
+  }
+
+  @override
+  void didUpdateWidget(covariant TypeForm oldWidget) {
+    if(oldWidget.initialValue != widget.initialValue) {
+      selected = widget.initialValue;
+    }
+    super.didUpdateWidget(oldWidget);
   }
 }
