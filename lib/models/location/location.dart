@@ -5,7 +5,7 @@ enum Location implements Comparable<Location> {
   unknown(icon: Icons.warning_amber, color: Colors.red, isOpenable: false),
   ground(icon: Icons.forest, color: Colors.green),
   gymnasium(icon: Icons.maps_home_work, color: Colors.blue),
-  external(icon: Icons.directions, color: Colors.orangeAccent, isOpenable: false);
+  external(icon: Icons.directions, color: Colors.amberAccent, isOpenable: false);
 
   final IconData icon;
   final Color color;
