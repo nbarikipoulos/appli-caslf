@@ -182,6 +182,11 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
       }
     }
 
+    List<Location> locations = GrantService.get().availableLocations;
+    if (!locations.contains(current.location)) {
+      current.location = locations.first;
+    }
+
     RulesEngine ruleEngine = RulesService().create(context);
 
     return Scaffold(
@@ -208,7 +213,7 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
                 ),
                 WhereForm(
                   locations: Functionality.location.isEditable(isEditing)
-                    ? Location.helper.values
+                    ? locations
                     : [current.location],
                   initialValue: current.location,
                   onChanged: (Location value) {
@@ -329,7 +334,7 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
                 TextFormField(
                   autovalidateMode: autovalidateMode,
                   decoration: InputDecoration(
-                    labelText: current.type == TimeSlotType.event
+                    labelText: _isDescriptionMandatory(current)
                       ? tr(context)!.screen_create_switch_comment_text
                       : tr(context)!.screen_create_switch_comment_text_opt,
                     prefixIcon: const Icon(Icons.message)
@@ -342,7 +347,24 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
                   },
                   validator: (message) => ruleEngine.validate(
                     current.copyWith(message: message),
-                    'timeSlot.event.has.comment'
+                    'timeSlot.must.have.comment'
+                  )
+                ),
+                if (current.location == Location.external) TextFormField(
+                  autovalidateMode: autovalidateMode,
+                  decoration: InputDecoration(
+                      labelText: tr(context)!.screen_create_switch_where_text,
+                      prefixIcon: const Icon(Icons.language)
+                  ),
+                  initialValue: current.where,
+                  onChanged: (where) {
+                    setState(() {
+                      current.where = where;
+                    });
+                  },
+                  validator: (where) => ruleEngine.validate(
+                      current.copyWith(where: where),
+                      'timeSlot.external.must.have.location'
                   )
                 ),
                 if (Functionality.canNotNotify.show(
@@ -422,6 +444,11 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
 
   Duration _getDefaultDuration([Location? location]) => PreferencesService()
     .getDefaultDurationFor(location ?? current.location)
+  ;
+
+  bool _isDescriptionMandatory(TimeSlot timeSlot) =>
+    timeSlot.type == TimeSlotType.event ||
+    timeSlot.location == Location.external
   ;
 
   Future<void> _doOnPressed(BuildContext context) => isEditing
@@ -547,6 +574,7 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
 
     DateTime? date;
     Duration? duration;
+    String? where;
 
     // Specific updates for recurrent time slots
     if (recurrent) {
@@ -562,10 +590,16 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
       duration = const Duration(hours: 24);
     }
 
+    // Ensure empty location settings aka 'where' field
+    if(current.location != Location.external) {
+      where = ''; // null will not unset field, see the copy method
+    }
+
     return current.copyWith(
       status: status,
       date: date,
-      duration: duration
+      duration: duration,
+      where: where
     );
   }
 }

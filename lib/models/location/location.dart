@@ -2,16 +2,19 @@ import 'package:caslf/utils/enum_helper.dart';
 import 'package:flutter/material.dart';
 
 enum Location implements Comparable<Location> {
-  unknown(icon: Icons.warning_amber, color: Colors.red),
+  unknown(icon: Icons.warning_amber, color: Colors.red, isOpenable: false),
   ground(icon: Icons.forest, color: Colors.green),
-  gymnasium(icon: Icons.maps_home_work, color: Colors.blue);
+  gymnasium(icon: Icons.maps_home_work, color: Colors.blue),
+  external(icon: Icons.directions, color: Colors.orangeAccent, isOpenable: false);
 
   final IconData icon;
   final Color color;
+  final bool isOpenable;
 
   const Location({
     required this.icon,
-    required this.color
+    required this.color,
+    this.isOpenable = true
   });
 
   @override

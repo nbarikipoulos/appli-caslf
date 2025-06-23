@@ -44,9 +44,9 @@ class _DefaultValuesPageState extends State<DefaultValuesPage> {
               Text(
                 tr(context)!.screen_default_duration_subtitle
               ),
-              ...Location.helper.values.map(
-                (location) => _duration(context, location)
-              ),
+              ...Location.helper.values
+                .where((location) => location.isOpenable)
+                .map((location) => _duration(context, location)),
               Text(
                 tr(context)!.misc.toCapitalized
               ),

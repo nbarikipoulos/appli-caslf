@@ -84,23 +84,21 @@ class _UserPageState extends State<UserPage> {
     ;
 
     return Column(
-        children: Location.helper.values.map((location) {
-          return ListTile(
-            leading: Icon(
-              location.icon,
-              color: location.color,
-            ),
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  f(location)
-                ),
-                user.hasAccessTo(location) ? iconOk : iconNotOk
-              ],
-            )
-          );
-        }).toList()
+      children: Location.helper.values
+        .where((location) => location.isOpenable)
+        .map((location) => ListTile(
+          leading: Icon(
+            location.icon,
+            color: location.color,
+          ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(f(location)),
+              user.hasAccessTo(location) ? iconOk : iconNotOk
+            ],
+          )
+        )).toList()
     );
   }
 

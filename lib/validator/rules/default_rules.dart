@@ -1,3 +1,4 @@
+import 'package:caslf/models/location/location.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/models/time_slot/time_slot_type.dart';
 import 'package:caslf/services/time_slot_service.dart';
@@ -26,6 +27,7 @@ class DefaultRules implements RuleProvider {
   void _init() {
     _add(_isConflicting);
     _add(_msgNotNullForEvent);
+    _add(_locationFilled);
     _add(_duration0);
     _add(_isBefore);
     _add(_isDaysInverted);
@@ -62,18 +64,40 @@ Rule<TimeSlot> _isConflicting = RuleFactory().create<TimeSlot>(
 );
 
 Rule<TimeSlot> _msgNotNullForEvent = RuleFactory().create<TimeSlot>(
-  'timeSlot.event.has.comment',
+  'timeSlot.must.have.comment',
   (context, timeSlot, [parameters]) {
     String? message = timeSlot.message;
+    bool commentRequired =
+      timeSlot.type == TimeSlotType.event ||
+      timeSlot.location == Location.external
+    ;
+
     if (
-      timeSlot.type == TimeSlotType.event
-      && (message == null || message.isEmpty)
+      commentRequired &&
+      (message == null || message.isEmpty)
     ) {
       return localization(context).add_comment_event;
     }
 
     return null;
   }
+);
+
+Rule<TimeSlot> _locationFilled = RuleFactory().create<TimeSlot>(
+    'timeSlot.external.must.have.location',
+    (context, timeSlot, [parameters]) {
+      String? where = timeSlot.where;
+      bool required = timeSlot.location == Location.external;
+
+      if (
+        required &&
+        (where == null || where.isEmpty)
+      ) {
+        return localization(context).add_location_for_external;
+      }
+
+      return null;
+    }
 );
 
 //////////////////////////////

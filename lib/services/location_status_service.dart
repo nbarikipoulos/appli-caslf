@@ -5,6 +5,7 @@ import 'package:caslf/services/service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+// For openable location only
 class LocationStatusService with ChangeNotifier implements Service {
   LocationStatusService._();
 

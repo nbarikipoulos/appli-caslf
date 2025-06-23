@@ -1,3 +1,4 @@
+import 'package:caslf/models/location/location.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/models/time_slot/time_slot_extra.dart';
 import 'package:caslf/models/time_slot/time_slot_status.dart';
@@ -61,12 +62,18 @@ class HeaderPart extends StatelessWidget {
               color: colorz,
               position: Position.start,
             ),
+            if (timeSlot.location == Location.external) MyTitle(
+              title: timeSlot.where!,
+              icon: Icons.language, //icon,
+              color: colorz,
+              position: Position.start,
+            ),
             if (hasExtraInfo) MyTitle(
               title: extraLabel,
               icon: icon,
               color: colorz,
               position: Position.start,
-            )
+            ),
           ]
         ),
         if (showAttendeeButton) Attendance(

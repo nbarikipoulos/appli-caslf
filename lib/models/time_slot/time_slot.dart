@@ -15,6 +15,7 @@ class TimeSlot implements Comparable<TimeSlot> {
   DateTime date;
   Duration duration;
   String? message;
+  String? where; // For external location
   bool autoOpen;
   bool isAllDay;
   TimeSlotStatus status;
@@ -32,6 +33,7 @@ class TimeSlot implements Comparable<TimeSlot> {
     required this.date,
     required this.duration,
     this.message,
+    this.where,
     this.autoOpen = false,
     this.isAllDay = false,
     required this.status,
@@ -80,6 +82,7 @@ class TimeSlot implements Comparable<TimeSlot> {
     DateTime? date,
     Duration? duration,
     String? message,
+    String? where,
     bool? autoOpen,
     bool? isAllDay,
     TimeSlotStatus? status,
@@ -97,6 +100,7 @@ class TimeSlot implements Comparable<TimeSlot> {
     date: date ?? this.date,
     duration: duration ?? this.duration,
     message: message ?? this.message,
+    where: where ?? this.where,
     autoOpen: autoOpen ?? this.autoOpen,
     isAllDay: isAllDay ?? this.isAllDay,
     status: status ?? this.status,
@@ -124,6 +128,7 @@ class TimeSlot implements Comparable<TimeSlot> {
       date: data?['date'].toDate(),
       duration: Duration(minutes: data?['duration']),
       message: data?['message'],
+      where: data?['where'],
       autoOpen: data?['auto_open'] ?? false,
       isAllDay: data?['is_all_day'] ?? false,
       status: TimeSlotStatus.values.byName(data?['status']),
@@ -148,6 +153,10 @@ class TimeSlot implements Comparable<TimeSlot> {
         message != null
         && message!.trim().isNotEmpty
       ) 'message': message!.trim(),
+      if (
+        where != null
+        && where!.trim().isNotEmpty
+      ) 'where': where!.trim(),
       'status': status.name,
       if (autoOpen) 'auto_open' : autoOpen,
       if (isAllDay) 'is_all_day': isAllDay,
@@ -155,5 +164,4 @@ class TimeSlot implements Comparable<TimeSlot> {
       if (attendees != null && attendees!.isNotEmpty) 'attendees' : attendees
     };
   }
-
 }

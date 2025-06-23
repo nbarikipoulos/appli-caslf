@@ -125,7 +125,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
           selector: (_, service) => service.getSubscribingFor(channel),
           builder: (context, value, __) => SwitchListTile(
             title: Text(
-              getLabel(context, channel.type).toCapitalized
+              getLabel(context, channel).toCapitalized
             ),
             // If value is null => grants have not been allowed.
             // Anyway, everything should be greyed...
@@ -145,13 +145,21 @@ class _NotificationsPageState extends State<NotificationsPage> {
 );
 
   // FIXME Arf.....
-  String getLabel(BuildContext context, ChannelType type) {
-    return switch(type) {
-      ChannelType.newSlot => tr(context)!.screen_notification_new_slot,
-      ChannelType.openClose => tr(context)!.screen_notification_open_close,
-      ChannelType.askFor => tr(context)!.screen_notification_ask_for,
-      ChannelType.news => tr(context)!.screen_notification_news,
-    };
+  String getLabel(BuildContext context, Channel channel) {
+    String result;
+
+    if (channel.location == Location.external) {
+      result = tr(context)!.screen_notification_external;
+    } else {
+      result = switch(channel.type) {
+        ChannelType.newSlot => tr(context)!.screen_notification_new_slot,
+        ChannelType.openClose => tr(context)!.screen_notification_open_close,
+        ChannelType.askFor => tr(context)!.screen_notification_ask_for,
+        ChannelType.news => tr(context)!.screen_notification_news,
+      };
+    }
+
+    return result;
   }  
   
 }

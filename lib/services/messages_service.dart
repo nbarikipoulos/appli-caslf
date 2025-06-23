@@ -234,7 +234,7 @@ class MessagesService extends ChangeNotifier implements Service {
           location: loc,
           prefix: channelPrefix
         ),
-        Channel(
+        if (loc.isOpenable) Channel(
           type: ChannelType.openClose,
           location: loc,
           prefix: channelPrefix

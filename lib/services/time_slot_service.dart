@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
+import 'package:caslf/models/location/location.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/models/time_slot/time_slot_status.dart';
 import 'package:caslf/services/service.dart';
@@ -35,6 +36,14 @@ class TimeSlotService with ChangeNotifier implements Service {
     bool canBeAdded,
     TimeSlot? conflicting
   }) canBeAdded(TimeSlot timeSlot) {
+    // Early exit: Allow many external timeSlots
+    if (timeSlot.location == Location.external) {
+      return (
+        canBeAdded: true,
+        conflicting: null
+      );
+    }
+
     final day = timeSlot.date.toDayDate();
 
     // Get timeSlots of the days and filter with location

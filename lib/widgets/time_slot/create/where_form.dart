@@ -36,29 +36,30 @@ class _WhereFormState extends State<WhereForm>{
   @override
   Widget build(BuildContext context) {
     GrantService grantService = context.watch<GrantService>();
+    selected = widget.initialValue;
     bool hasAccess = grantService.hasAccessTo(selected);
 
     return Wrap(
       children: [
         ToggleButtonsFormField<Location>(
-            values: widget.locations,
-            initialValues: [widget.initialValue],
-            itemBuilder: (location) => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Row(
-                children: [
-                  Icon(location.icon, color: location.color),
-                  const SizedBox(width: 8),
-                  Text(tr(context)!.location(location.name))
-                ],
-              )
-            ),
-            onPressed: (values) {
-              setState(() {
-                selected = values.first;
-              });
-              widget.onChanged.call(values.first);
-            }
+          values: widget.locations,
+          initialValues: [widget.initialValue],
+          itemBuilder: (location) => Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Row(
+              children: [
+                Icon(location.icon, color: location.color),
+                const SizedBox(width: 8),
+                Text(tr(context)!.location(location.name))
+              ],
+            )
+          ),
+          onPressed: (values) {
+            setState(() {
+              selected = values.first;
+            });
+            widget.onChanged.call(values.first);
+          }
         ),
         if (!hasAccess) ListTile(
           iconColor: Colors.deepOrange,

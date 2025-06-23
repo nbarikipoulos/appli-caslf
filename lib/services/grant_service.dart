@@ -27,6 +27,13 @@ class GrantService implements Service {
     _ => false
   } || actAsClub;
 
+  List<Location> get availableLocations => actAsClub
+    ? Location.helper.values
+    : Location.helper.values
+      .where((location) => location.isOpenable)
+      .toList()
+  ;
+
   // Aka can at last update the db! "Ceinture et Bretelles"
   bool get canReallyAddTimeSlot => _userGrant.type == UserType.confirmed;
 

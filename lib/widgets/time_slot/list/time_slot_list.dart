@@ -82,6 +82,7 @@ class _TimeSlotListViewState extends State<TimeSlotListView> {
 
   bool _isDismissible(Widget item) =>
     item is TimeSlotWidget
+    && item.timeSlot.location.isOpenable
     && DayType.getType(item.timeSlot.date) == DayType.today
     && grantService.hasAccessTo(item.timeSlot.location)
     && !(

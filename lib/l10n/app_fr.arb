@@ -1,5 +1,5 @@
 {
-  "location": "{location, select, ground{terrain} gymnasium{gymnase} other{---}}",
+  "location": "{location, select, ground{terrain} gymnasium{gymnase} external{extérieur} other{---}}",
   "location_status": "{status, select, open{ouvert} close{fermé} other{---}}",
 
   "location_no_access": "Vous n'avez pas d'accés; votre demande devra être confirmée",
@@ -54,6 +54,7 @@
   "duration_is_zero": "Durée de 0 minute!",
   "conflict_in_timeSlot": "Conflit de {start} à {to}",
   "add_comment_event": "Rentrez un descriptif",
+  "add_location_for_external": "Renseignez un lieu",
 
   "news" : "infos",
 
@@ -71,6 +72,7 @@
   "screen_create_recurrent_switch" : "Créer des créneaux récurrents",
   "screen_create_switch_comment_text": "Saisir un commentaire",
   "screen_create_switch_comment_text_opt": "Saisir un commentaire (optionnel)",
+  "screen_create_switch_where_text": "Saisir le lieu",
   "screen_create_switch_do_not_notify": "Ne pas notifier",
   "screen_create_switch_auto_open_close": "Ouvrir/Fermer automatiquement",
   "screen_create_switch_all_day": "Toute la journée",
@@ -108,6 +110,7 @@
   "screen_notification_allow_notifications" : "Autoriser les notifications",
   "screen_notification_new_slot": "s'abonner aux créations de créneaux",
   "screen_notification_open_close": "s'abonner aux ouvertures/fermetures",
+  "screen_notification_external": "s'abonner aux événements extérieurs",
   "screen_notification_ask_for": "s'abonner aux demandes de créneaux",
   "screen_notification_news": "s'abonner aux nouvelles",
 
@@ -140,9 +143,12 @@
 
   "message_new_timeslot_title": "Nouveau créneau au {location}",
   "message_ask_new_timeslot_title": "Demande de créneau au {location}",
-  "message_event_title": "Événement: {titled}",
+  "message_event_title": "Événement: {title}",
   "message_maintenance_title": "Travaux au {location}",
   "message_closed_title": "Fermeture du {location}",
+
+  "message_external_title": "{time_slot_type}: {title}",
+  "message_external_body": "{date}\nLieu: {location}",
 
   "message_new_timeslot_body": "{date}, {schedule}.",
   "message_event_body": "Au {location}, {date}, {schedule}.",

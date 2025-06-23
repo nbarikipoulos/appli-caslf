@@ -1,3 +1,4 @@
+import 'package:caslf/models/location/location.dart';
 import 'package:caslf/models/location/location_action.dart';
 import 'package:caslf/models/message/channel.dart';
 import 'package:caslf/models/message/channel_type.dart';
@@ -87,7 +88,8 @@ extension TimeSlotExtension on TimeSlot {
 
     String locationLabel = localization.location(location.name);
 
-    final scheduleLabel = timeRangeLabel(context, this);
+    final dateLabel = dayDateLabel(context, date); // day
+    final scheduleLabel = timeRangeLabel(context, this); // time
 
     if (recurrent) {
       // title
@@ -110,6 +112,20 @@ extension TimeSlotExtension on TimeSlot {
         dayEnd,
         daysLabel,
         scheduleLabel
+      );
+    } else if (location == Location.external) {
+      // title
+      final typeLbl =  localization.time_slot_type(type.name);
+      title = localization.message_external_title(
+        typeLbl,
+        message!
+      );
+
+      // body
+
+      body = localization.message_external_body(
+        '${dateLabel.toCapitalized}, $scheduleLabel',
+        where!
       );
     } else {
       // title
@@ -134,17 +150,15 @@ extension TimeSlotExtension on TimeSlot {
 
       // body
 
-      final dateLabel = dayDateLabel(context, date).toCapitalized;
-
       body = switch(type) {
         TimeSlotType.common ||
         TimeSlotType.maintenance ||
         TimeSlotType.closed => localization.message_new_timeslot_body(
-          dateLabel,
+          dateLabel.toCapitalized,
           scheduleLabel
         ),
         TimeSlotType.event => localization.message_event_body(
-          dateLabel,
+          dateLabel.toCapitalized,
           locationLabel,
           scheduleLabel
         ),

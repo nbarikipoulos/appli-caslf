@@ -31,16 +31,18 @@ class TimeSlotsPage extends StatelessWidget {
             children: [
               Row(
                 children:
-                  Location.helper.values.map((location) => Expanded(
-                    child: Selector<LocationStatusService, LocationStatus>(
-                      selector: (_, service) => service
-                        .locationStatuses[location]!,
-                      builder: (_, status, __) => LocationCard(
-                        location: location,
-                        isOpen: status.isOpen
+                  Location.helper.values
+                    .where((location) => location.isOpenable)
+                    .map((location) => Expanded(
+                      child: Selector<LocationStatusService, LocationStatus>(
+                        selector: (_, service) => service
+                          .locationStatuses[location]!,
+                        builder: (_, status, __) => LocationCard(
+                          location: location,
+                          isOpen: status.isOpen
+                        )
                       )
-                    )
-                  )).toList(),
+                    )).toList(),
               ),
               const SizedBox(height: 10),
               const Expanded(
