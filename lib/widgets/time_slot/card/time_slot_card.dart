@@ -13,9 +13,9 @@ import 'package:caslf/theme/theme_utils.dart'
   show primary;
 import 'package:caslf/utils/day_type.dart';
 import 'package:caslf/widgets/localization.dart';
+import 'package:caslf/widgets/my_title.dart';
 import 'package:caslf/widgets/time_slot/card/details_part.dart';
 import 'package:caslf/widgets/time_slot/card/header_part.dart';
-import 'package:caslf/widgets/time_slot/card/sub/message.dart';
 import 'package:caslf/widgets/time_slot/time_slot_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -32,34 +32,25 @@ class TimeSlotCard extends StatelessWidget implements TimeSlotWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isAwaiting = timeSlot.status == TimeSlotStatus.awaiting;
+    final isAwaiting = timeSlot.status == TimeSlotStatus.awaiting;
 
-    const awaitingColor = Colors.orange;
+    final location = timeSlot.location;
+    final type = timeSlot.type;
 
     // Arf.....
     final dividerColor = isAwaiting
-      ? awaitingColor
-      : switch(timeSlot.type) {
-        TimeSlotType.common => timeSlot.location.color,
-        (_) => timeSlot.type.color
+      ? Colors.orange
+      : switch(type) {
+        TimeSlotType.common => location.color,
+        (_) => type.color
       }
     ;
 
-    TextStyle? msgTextStyle =
-      timeSlot.type == TimeSlotType.event ||
-      timeSlot.type == TimeSlotType.competition
-      ? TextStyle(
-        color: timeSlot.type.color,
-        fontWeight: FontWeight.bold
-      ) : null
+    // Only for common timeSlot
+    final showMessage = type == TimeSlotType.common
+      && timeSlot.message != null
     ;
 
-    final locationIconColor = switch(timeSlot.type) {
-      // TimeSlotType.closed => timeSlot.type.color,
-      (_) => timeSlot.location.color
-    };
-
-    final showMessage = timeSlot.message != null;
     final showDetails = (
       timeSlot.ownerId != clubId
       && timeSlot.ownerId != UserService().current.uid
@@ -81,7 +72,7 @@ class TimeSlotCard extends StatelessWidget implements TimeSlotWidget {
             children: <Widget>[
               Icon(
                 timeSlot.location.icon,
-                color: locationIconColor,
+                color: timeSlot.location.color,
                 size: 48
               ),
               const SizedBox(width: 16),
@@ -91,16 +82,12 @@ class TimeSlotCard extends StatelessWidget implements TimeSlotWidget {
                   children: <Widget>[
                     HeaderPart(
                       timeSlot: timeSlot,
-                      colorz: dividerColor
                     ),
                     if (showMessage || showDetails) Divider(
                       color: dividerColor,
                       thickness: 2
                     ),
-                    if (showMessage) TimeSlotMessage(
-                      message: timeSlot.message!,
-                      style : msgTextStyle
-                    ),
+                    if (showMessage) MyTitle(title: timeSlot.message!),
                     if (showDetails) DetailsPart(timeSlot: timeSlot)
                   ],
                 ),
