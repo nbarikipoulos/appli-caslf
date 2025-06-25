@@ -1,4 +1,4 @@
-import 'package:caslf/extensions/time_slot/time_slot_ext.dart';
+import 'package:caslf/messages/time_slot_message.dart';
 import 'package:caslf/models/location/location.dart';
 import 'package:caslf/models/location/location_action.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
@@ -70,10 +70,10 @@ class _DismissibleTimeSlotState extends State<DismissibleTimeSlot>
             : LocationAction.open
           ;
 
-          final message = _timeSlot.openCloseMessage(
-            context,
-            action: action
-          );
+          final message = TimeSlotMessageBuilder(
+            context: context,
+            timeSlot: _timeSlot
+          ).openCloseMessage(action: action);
 
           MessagesService().send(message);
         }

@@ -1,4 +1,4 @@
-import 'package:caslf/extensions/time_slot/time_slot_ext.dart';
+import 'package:caslf/messages/time_slot_message.dart';
 import 'package:caslf/models/message/message.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/models/time_slot/time_slot_status.dart';
@@ -62,11 +62,11 @@ class _AttendanceState extends State<Attendance> {
           'confirmed_by' : _user.uid,
           'status': status.name,
         };
-        // Send message for new timeSlot as it is now confirmed
-        message = widget.timeSlot // Enforce status..
-          .copyWith(status: status)
-          .createMessage(context)
-        ;
+        // Message to send for new timeSlot as it is now confirmed
+        message = TimeSlotMessageBuilder(
+          context: context,
+          timeSlot: widget.timeSlot.copyWith(status: status) // Enforce status..
+        ).createNew();
       } else { // User is quite simply joining the timeSlot
         attendees ??= { };
         attendees.add(_user.uid);

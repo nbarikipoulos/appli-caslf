@@ -1,4 +1,4 @@
-import 'package:caslf/extensions/time_slot/time_slot_ext.dart';
+import 'package:caslf/messages/time_slot_message.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/models/time_slot/time_slot_status.dart';
 import 'package:caslf/services/messages_service.dart';
@@ -30,13 +30,13 @@ class ConfirmTimeSlot extends StatelessWidget {
           uid
         ).then(
           (_) => MessagesService().send(
-            timeSlot // Enforce status...
-              .copyWith(status: TimeSlotStatus.accepted)
-              .createMessage(context)
+            TimeSlotMessageBuilder(
+              context: context,
+              timeSlot: timeSlot.copyWith(status: TimeSlotStatus.accepted)
+            ).createNew()
           )
         ),
       ),
     );
   }
-
 }

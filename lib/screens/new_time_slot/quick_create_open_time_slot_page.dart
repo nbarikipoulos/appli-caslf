@@ -1,5 +1,5 @@
 import 'package:caslf/extensions/string_ext.dart';
-import 'package:caslf/extensions/time_slot/time_slot_ext.dart';
+import 'package:caslf/messages/time_slot_message.dart';
 import 'package:caslf/models/location/location.dart';
 import 'package:caslf/models/location/location_action.dart';
 import 'package:caslf/models/message/message.dart';
@@ -194,10 +194,10 @@ class QuickCreateOpenTimeSlotPageState extends State<QuickCreateOpenTimeSlotPage
 
   Future<void> _doOnPressed(BuildContext context) async {
     // Message to send
-    Message message = current.openCloseMessage(
-      context,
-      action: LocationAction.open
-    );
+    Message message = TimeSlotMessageBuilder(
+      context: context,
+      timeSlot: current
+    ).openCloseMessage(action: LocationAction.open);
 
     await TimeSlotService()
       .set(current) // Create the timeSlot

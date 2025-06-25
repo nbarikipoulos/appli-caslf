@@ -2,6 +2,7 @@ import 'package:caslf/constants.dart';
 import 'package:caslf/extensions/date_time_ext.dart';
 import 'package:caslf/extensions/string_ext.dart';
 import 'package:caslf/extensions/time_slot/time_slot_ext.dart';
+import 'package:caslf/messages/time_slot_message.dart';
 import 'package:caslf/models/location/location.dart';
 import 'package:caslf/models/message/message.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
@@ -470,13 +471,14 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
 
   Future<void> _doUpdate(BuildContext context) async {
     bool sendMessage;
-    Message? msg;
+    Message? message;
 
     TimeSlot t0 = widget.timeSlot!;
 
     //
     // Update date, if needed
     //
+
     if (current.isAllDay) {
       current.date = current.date.toDayDate(); // -> 0h
       current.duration = const Duration(hours: 24);
@@ -515,7 +517,10 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
     //
 
     if (sendMessage) {
-      msg = t0.timeUpdateMessage(context, current);
+      message = TimeSlotMessageBuilder(
+        context: context,
+        timeSlot: t0
+      ).timeUpdate(current);
     }
 
     //
@@ -526,8 +531,8 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
       await TimeSlotService()
         .update(t0.id, values)
         .then((_) {
-          if (msg != null) {
-            _doSendMessage(msg);
+          if (message != null) {
+            _doSendMessage(message);
           }
         })
       ;
@@ -551,17 +556,21 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
       : [timeSlotSeed]
     ;
 
+    TimeSlotMessageBuilder builder = TimeSlotMessageBuilder(
+      context: context,
+      timeSlot: timeSlotSeed
+    );
+
     // Message to send
     Message message = recurrent
-      ? timeSlotSeed.createMessage(
-        context,
-        recurrent: true,
-        start: recurrentData.start,
-        end: recurrentData.end,
-        days: recurrentData.days
-      )
-      : timeSlotSeed.createMessage(context)
+      ? builder.createRecurrent(
+          start: recurrentData.start,
+          end: recurrentData.end,
+          days: recurrentData.days
+        )
+      : builder.createNew()
     ;
+
 
     await TimeSlotService()
       .setAll(timeSlots)
