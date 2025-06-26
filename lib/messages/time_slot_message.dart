@@ -166,35 +166,75 @@ class TimeSlotMessageBuilder {
   }
 
   Message timeUpdate(TimeSlot newTimeSlot) {
-    ChannelType channelType = _timeSlot.status == TimeSlotStatus.awaiting
-      ? ChannelType.askFor
-      : ChannelType.newSlot
+    final bool shouldBeConfirmed = TimeSlotStatus.awaiting == _timeSlot.status;
+
+    return shouldBeConfirmed
+      ? _updateTimeAskFor(newTimeSlot)
+      : _timeUpdate(newTimeSlot)
     ;
+  }
+
+  Message _timeUpdate(TimeSlot newTimeSlot) {
+    String title;
+    String body;
+
+    // title
+
+    final typeLabel = _localisation.time_slot_type(_timeSlot.type.name);
+
+    title = switch(_timeSlot.type) {
+      TimeSlotType.common =>
+        _localisation.message_updated_common_timeslot_title(
+          _dateLabel,
+          _locationLabel
+        ),
+      (_) =>
+        _localisation.message_updated_typed_timeslot_title(
+          _dateLabel,
+          typeLabel
+        )
+    };
+
+    // body
 
     final scheduleLabelOld = timeRangeLabel(_context, _timeSlot);
     final scheduleLabelNew = timeRangeLabel(_context, newTimeSlot);
 
-    // title
-
-    final f = switch(channelType) {
-      ChannelType.askFor => _localisation.message_updated_ask_common_timeslot_title,
-      (_) => _localisation.message_updated_timeslot_title
-    };
-
-    final title = Function.apply(
-      f,
-      [_dateLabel.toCapitalized, _locationLabel]
-    );
-
-    // body
-
-    final body = _localisation.message_updated_timeslot_body(
+    body = _localisation.message_updated_common_timeslot_body(
       scheduleLabelNew,
       scheduleLabelOld
     );
 
     return Message.create(
-      channelId: _channelId(channelType),
+      channelId: _channelId(ChannelType.newSlot),
+      title: title,
+      body: body
+    );
+  }
+
+  Message _updateTimeAskFor(TimeSlot newTimeSlot) {
+    String title;
+    String body;
+
+    // title
+
+    title = _localisation.message_updated_ask_common_timeslot_title(
+      _dateLabel,
+      _locationLabel
+    );
+
+    // body
+
+    final scheduleLabelOld = timeRangeLabel(_context, _timeSlot);
+    final scheduleLabelNew = timeRangeLabel(_context, newTimeSlot);
+
+    body = _localisation.message_updated_common_timeslot_body(
+      scheduleLabelNew,
+      scheduleLabelOld
+    );
+
+    return Message.create(
+      channelId: _channelId(ChannelType.askFor),
       title: title,
       body: body
     );

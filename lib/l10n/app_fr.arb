@@ -155,9 +155,10 @@
   "message_new_timeslots_title": "Nouveaux créneaux au {location}",
   "message_new_timeslots_body": "Les {days} du {date_begin} au {date_end}, {schedule}.",
 
-  "message_updated_timeslot_title": "Modification: {date} au {location}",
+  "message_updated_common_timeslot_title": "Modification: {date} au {location}",
+  "message_updated_typed_timeslot_title": "Modification: {date} ({type})",
   "message_updated_ask_common_timeslot_title": "Demande mise à jour: {date} au {location}",
-  "message_updated_timeslot_body" : "Nouvel horaire: {schedule_new};\nancien: {schedule_old}.",
+  "message_updated_common_timeslot_body" : "Nouvel horaire: {schedule_new};\nancien: {schedule_old}.",
 
   "guest_message_timeslot" : "Vous êtes connecté en tant qu'invité: Le créneau ne sera pas créé."
 }
