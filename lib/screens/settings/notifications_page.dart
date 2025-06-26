@@ -2,6 +2,7 @@ import 'package:caslf/extensions/string_ext.dart';
 import 'package:caslf/models/location/location.dart';
 import 'package:caslf/models/message/channel.dart';
 import 'package:caslf/models/message/channel_type.dart';
+import 'package:caslf/models/time_slot/time_slot_type.dart';
 import 'package:caslf/services/messages_service.dart';
 import 'package:caslf/services/messaging/fcm_init_service.dart';
 import 'package:caslf/widgets/localization.dart';
@@ -72,16 +73,26 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
     // FIXME To improve...
 
-    final Map<Location, List<Channel>> locations = {
-      for (var location in Location.helper.values)
-        location : channels.where((channel) => channel.location == location).toList()
+    final locations = Location.helper.values
+      .where((location) => location != Location.external)
+    ;
+
+    final Map<Location, List<Channel>> channelForLocations = {
+      for (var location in locations)
+        location : channels.where(
+          (channel) => channel.location == location
+        ).toList()
     };
 
     // News
-    final news = channels.firstWhere((channel) => channel.type == ChannelType.news);
+    f(ChannelType type) => channels
+      .firstWhere((channel) => channel.type == type)
+    ;
+
+    //final news = channels.firstWhere((channel) => channel.type == ChannelType.news);
 
     return [
-     ...locations.entries
+     ...channelForLocations.entries
        .map((entry) => createGroup(
          context,
          entry.value,
@@ -93,7 +104,25 @@ class _NotificationsPageState extends State<NotificationsPage> {
        )),
        createGroup(
          context,
-         [news],
+         [f(ChannelType.event)],
+         groupTitle(
+           TimeSlotType.event.icon,
+           tr(context)!.time_slot_type(TimeSlotType.event.name),
+           TimeSlotType.event.color
+         )
+       ),
+       createGroup(
+         context,
+         [f(ChannelType.competition)],
+         groupTitle(
+           TimeSlotType.competition.icon,
+           tr(context)!.time_slot_type(TimeSlotType.competition.name),
+           TimeSlotType.competition.color
+         )
+       ),
+       createGroup(
+         context,
+         [f(ChannelType.news)],
          groupTitle(
            Icons.message,
            tr(context)!.news,
@@ -145,21 +174,15 @@ class _NotificationsPageState extends State<NotificationsPage> {
 );
 
   // FIXME Arf.....
-  String getLabel(BuildContext context, Channel channel) {
-    String result;
-
-    if (channel.location == Location.external) {
-      result = tr(context)!.screen_notification_external;
-    } else {
-      result = switch(channel.type) {
-        ChannelType.newSlot => tr(context)!.screen_notification_new_slot,
-        ChannelType.openClose => tr(context)!.screen_notification_open_close,
-        ChannelType.askFor => tr(context)!.screen_notification_ask_for,
-        ChannelType.news => tr(context)!.screen_notification_news,
-      };
-    }
-
-    return result;
-  }  
-  
+  String getLabel(
+    BuildContext context,
+    Channel channel
+  ) => switch(channel.type) {
+    ChannelType.newSlot => tr(context)!.screen_notification_new_slot,
+    ChannelType.openClose => tr(context)!.screen_notification_open_close,
+    ChannelType.askFor => tr(context)!.screen_notification_ask_for,
+    ChannelType.news => tr(context)!.screen_notification_news,
+    ChannelType.event => tr(context)!.screen_notification_event,
+    ChannelType.competition => tr(context)!.screen_notification_competition,
+  };
 }

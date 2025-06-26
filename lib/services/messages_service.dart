@@ -212,7 +212,7 @@ class MessagesService extends ChangeNotifier implements Service {
       return _subscriptions.keys.toList();
     }
 
-    GrantService grantService = GrantService(adminService: AdminService());
+    GrantService grantService = GrantService.get();
 
     var result = <Channel>[];
 
@@ -227,39 +227,45 @@ class MessagesService extends ChangeNotifier implements Service {
     // Channels for locations
     //
 
-    for (var loc in Location.helper.values) {
+    // No channel dedicated to external locations
+    final locations = Location.helper.values
+      .where((location) => location != Location.external)
+    ;
+
+    for (var location in locations) {
       result.addAll([
         Channel(
           type: ChannelType.newSlot,
-          location: loc,
+          location: location,
           prefix: channelPrefix
         ),
-        if (loc.isOpenable) Channel(
+        if (location.isOpenable) Channel(
           type: ChannelType.openClose,
-          location: loc,
+          location: location,
+          prefix: channelPrefix
+        ),
+        if (grantService.hasAccessTo(location)) Channel(
+          type: ChannelType.askFor,
+          location: location,
           prefix: channelPrefix
         )
       ]);
-
-      if (grantService.hasAccessTo(loc)) {
-        result.add(
-          Channel(
-            type: ChannelType.askFor,
-            location: loc,
-            prefix: channelPrefix
-          )
-        );
-      }
     }
 
     //
-    // Channel for news
+    // Channel for events, competitions and news
     //
 
-    result.add(Channel(
-      type: ChannelType.news,
+    final otherChannels = [
+      ChannelType.event,
+      ChannelType.competition,
+      ChannelType.news
+    ].map((channelType) => Channel(
+      type: channelType,
       prefix: channelPrefix
-    ));
+    )).toList();
+
+    result.addAll(otherChannels);
 
     return result;
   }

@@ -110,7 +110,8 @@
   "screen_notification_allow_notifications" : "Autoriser les notifications",
   "screen_notification_new_slot": "s'abonner aux créations de créneaux",
   "screen_notification_open_close": "s'abonner aux ouvertures/fermetures",
-  "screen_notification_external": "s'abonner aux événements extérieurs",
+  "screen_notification_event": "s'abonner aux événements",
+  "screen_notification_competition": "s'abonner aux compétitions",
   "screen_notification_ask_for": "s'abonner aux demandes de créneaux",
   "screen_notification_news": "s'abonner aux nouvelles",
 

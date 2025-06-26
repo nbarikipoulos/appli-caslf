@@ -31,10 +31,19 @@ class TimeSlotMessageBuilder {
   String get _dateLabel => dayDateLabel(_context, _timeSlot.date); // day
   String get _scheduleLabel => timeRangeLabel(_context, _timeSlot); // time
 
-  String _channelId(ChannelType type) => Channel.computeId(
-    type: type,
-    location: _timeSlot.location
-  );
+  String _channelId(ChannelType type) => switch(_timeSlot.type) {
+    // Redirect event and competition to their dedicated channel
+    TimeSlotType.event => Channel.computeId(
+      type: ChannelType.event
+    ),
+    TimeSlotType.competition => Channel.computeId(
+      type: ChannelType.competition
+    ),
+    (_) => Channel.computeId(
+      type: type,
+      location: _timeSlot.location
+    )
+  };
 
   Message createNew() {
     final bool shouldBeConfirmed = TimeSlotStatus.awaiting == _timeSlot.status;
@@ -50,10 +59,6 @@ class TimeSlotMessageBuilder {
     required DateTime end,
     required List<Day> days
   }) {
-    String channelId = Channel.computeId(
-      type: ChannelType.newSlot,
-      location: _timeSlot.location
-    );
 
     String title;
     String body;
@@ -83,7 +88,7 @@ class TimeSlotMessageBuilder {
     );
 
     return Message.create(
-      channelId: channelId,
+      channelId: _channelId(ChannelType.newSlot),
       title: title,
       body: body
     );
