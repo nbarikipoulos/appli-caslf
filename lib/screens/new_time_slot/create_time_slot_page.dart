@@ -392,6 +392,7 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
                 if (Functionality.autoOpen.show(
                   mode: mode,
                   value: canActivateAutoOpen
+                    && current.location.isOpenable
                 )) SwitchListTileFormField(
                   initialValue: current.autoOpen,
                   autovalidateMode: autovalidateMode,
@@ -512,6 +513,13 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
       ;
     }
 
+    if (
+      current.where != null // aka is mandatory
+      && current.where != t0.where // != ...
+    ) {
+      values['where'] = current.where;
+    }
+
     //
     // Message to send
     //
@@ -596,6 +604,7 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
     DateTime? date;
     Duration? duration;
     String? where;
+    bool? autoOpen;
 
     // Specific updates for recurrent time slots
     if (recurrent) {
@@ -616,10 +625,15 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
       where = ''; // null will not unset field, see the copy method
     }
 
+    if (!current.location.isOpenable) {
+      autoOpen = false;
+    }
+
     return current.copyWith(
       status: status,
       date: date,
       duration: duration,
+      autoOpen: autoOpen,
       where: where
     );
   }
