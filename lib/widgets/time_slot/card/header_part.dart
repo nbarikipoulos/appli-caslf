@@ -76,7 +76,7 @@ class HeaderPart extends StatelessWidget {
             MyTitle( // Schedule
               title: _timeLabel(context),
               style: contentLabelStyle,
-              icon: Icons.schedule, //icon,
+              icon: scheduleIcon, //icon,
               color: color,
               position: Position.start,
             ),
@@ -109,6 +109,11 @@ class HeaderPart extends StatelessWidget {
       ],
     );
   }
+
+  IconData get scheduleIcon => GrantService.get().canEditTimeSlot(timeSlot)
+    ? Icons.access_time_filled
+    : Icons.schedule
+  ;
 
   String _timeLabel(BuildContext context) {
     String result;
