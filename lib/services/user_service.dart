@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:caslf/constants.dart';
 import 'package:caslf/models/user/user_data.dart';
 import 'package:caslf/models/user/user_grant.dart';
 import 'package:caslf/services/service.dart';
@@ -109,11 +108,6 @@ class UserService with ChangeNotifier implements Service  {
     );
 
     _currentUser = userData!;
-
-    //
-    // Add user representing the club by default
-    //
-    await user(clubId);
 
     // Add listener on CHANGE on (BASIC) user data
     _usersSubscription = _db

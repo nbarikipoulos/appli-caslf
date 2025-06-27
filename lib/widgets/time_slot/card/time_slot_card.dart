@@ -1,4 +1,3 @@
-import 'package:caslf/constants.dart';
 import 'package:caslf/extensions/string_ext.dart';
 import 'package:caslf/extensions/time_slot/time_slot_ext.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
@@ -110,7 +109,7 @@ class TimeSlotCard extends StatelessWidget implements TimeSlotWidget {
       _hasAttendees
       || (
         timeSlot.ownerId != UserService().current.uid &&
-        timeSlot.ownerId != clubId
+        !timeSlot.isClub
       )
     )
   ;

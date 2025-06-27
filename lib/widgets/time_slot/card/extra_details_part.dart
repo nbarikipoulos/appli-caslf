@@ -1,4 +1,3 @@
-import 'package:caslf/constants.dart';
 import 'package:caslf/extensions/string_ext.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/models/time_slot/time_slot_status.dart';
@@ -33,7 +32,7 @@ class _ExtraDetailsPartState extends State<ExtraDetailsPart> {
 
   @override
   Widget build(BuildContext context) {
-    bool showOwnerId = widget.timeSlot.ownerId != clubId
+    bool showOwnerId = !widget.timeSlot.isClub
       && widget.timeSlot.ownerId != UserService().current.uid
     ;
     bool hasBeenAccepted = widget.timeSlot.status == TimeSlotStatus.accepted;
@@ -93,7 +92,7 @@ class _ExtraDetailsPartState extends State<ExtraDetailsPart> {
   }
 
   List<String> get _attendeeUids => [
-    if (widget.timeSlot.ownerId != clubId) widget.timeSlot.ownerId,
+    if (!widget.timeSlot.isClub) widget.timeSlot.ownerId,
     if (widget.timeSlot.confirmedBy != null) widget.timeSlot.confirmedBy!,
     ...widget.timeSlot.attendees!
   ];

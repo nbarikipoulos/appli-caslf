@@ -2,7 +2,8 @@ import 'package:caslf/utils/enum_helper.dart';
 
 enum TimeSlotExtra {
   unknown,
-  casual;
+  casual,
+  club;
 
   static final EnumHelper<TimeSlotExtra> helper = EnumHelper(
     TimeSlotExtra.values,

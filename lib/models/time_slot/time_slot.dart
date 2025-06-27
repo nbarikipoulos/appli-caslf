@@ -1,4 +1,3 @@
-import 'package:caslf/constants.dart';
 import 'package:caslf/models/location/location.dart';
 import 'package:caslf/models/time_slot/time_slot_extra.dart';
 import 'package:caslf/models/time_slot/time_slot_status.dart';
@@ -47,9 +46,14 @@ class TimeSlot implements Comparable<TimeSlot> {
   bool get hasAttendees => attendees != null && attendees!.isNotEmpty;
 
   int get numberOfUsers =>
-    (ownerId != clubId ? 1 : 0)
+    (!isClub ? 1 : 0)
     + (confirmedBy != null ? 1 : 0)
     + (attendees != null ? attendees!.length : 0)
+  ;
+
+  bool get isClub => hasExtra(TimeSlotExtra.club)
+    || ownerId == 'club' // FIXME To remove, old compatibility
+    || hasExtra(TimeSlotExtra.unknown) // Re
   ;
 
   bool isUserExpected(String uid) => ownerId == uid

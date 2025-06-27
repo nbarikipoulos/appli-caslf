@@ -1,4 +1,3 @@
-import 'package:caslf/constants.dart';
 import 'package:caslf/extensions/date_time_ext.dart';
 import 'package:caslf/extensions/string_ext.dart';
 import 'package:caslf/extensions/time_slot/time_slot_ext.dart';
@@ -131,12 +130,13 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
       TimeSlot edited = widget.timeSlot!;
       current = edited.copyWith(id: edited.id);
     } else {
-      current = defaultTimeSlot.copyWith(
-        ownerId: AdminService().actAsClub ? clubId : user.uid
-      );
+      current = defaultTimeSlot;
+      if (AdminService().actAsClub) {
+        current.extra!.add(TimeSlotExtra.club);
+      }
     }
 
-    mode = current.ownerId == clubId ? CreatedBy.club : CreatedBy.user;
+    mode = current.isClub ? CreatedBy.club : CreatedBy.user;
 
     recurrent = false;
     recurrentData = defaultRecurrentData;
@@ -173,13 +173,14 @@ class CreateTimeSlotPageState extends State<CreateTimeSlotPage> {
     if (!isEditing) {
       if (actAsClub) {
         mode = CreatedBy.club;
-        current.ownerId = clubId;
-        current.extra?.remove(TimeSlotExtra.casual);
+        current.extra!.remove(TimeSlotExtra.casual);
+        current.extra!.add(TimeSlotExtra.club);
       } else {
         mode = CreatedBy.user;
         current.ownerId = user.uid;
         current.type = TimeSlotType.common;
-        current.extra?.add(TimeSlotExtra.casual);
+        current.extra!.add(TimeSlotExtra.casual);
+        current.extra!.remove(TimeSlotExtra.club);
       }
     }
 

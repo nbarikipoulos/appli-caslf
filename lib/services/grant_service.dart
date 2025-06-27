@@ -1,4 +1,3 @@
-import 'package:caslf/constants.dart';
 import 'package:caslf/models/location/location.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/models/time_slot/time_slot_type.dart';
@@ -45,9 +44,10 @@ class GrantService implements Service {
       (
         timeSlot.ownerId == _user.uid
         && timeSlot.confirmedBy == null // Do not delete confirmed TimeSlot
+        && !timeSlot.isClub
+        && !actAsClub
       ) || (
-        timeSlot.ownerId == clubId &&
-        actAsClub
+        timeSlot.isClub && actAsClub
       )
       || adminService.isAdminMode
     )
