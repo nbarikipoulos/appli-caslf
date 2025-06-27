@@ -17,7 +17,8 @@ ThemeData appThemeDark = ThemeData(
   inputDecorationTheme: _inputDecorationTheme,
   bottomNavigationBarTheme: _bottomNavigationBarTheme,
   outlinedButtonTheme: _outlinedButtonTheme,
-  toggleButtonsTheme: _toggleButtonsTheme
+  toggleButtonsTheme: _toggleButtonsTheme,
+  expansionTileTheme: _expansionTileTheme
 );
 
 ThemeData appTheme = ThemeData(
@@ -34,12 +35,19 @@ ThemeData appTheme = ThemeData(
   inputDecorationTheme: _inputDecorationTheme,
   bottomNavigationBarTheme: _bottomNavigationBarTheme,
   outlinedButtonTheme: _outlinedButtonTheme,
-  toggleButtonsTheme: _toggleButtonsTheme
+  toggleButtonsTheme: _toggleButtonsTheme,
+  expansionTileTheme: _expansionTileTheme
 );
 
 //
 // Theme per widget
 //
+
+const _expansionTileTheme = ExpansionTileThemeData(
+  childrenPadding: EdgeInsets.all(0.0),
+  tilePadding: EdgeInsets.all(0.0),
+  shape: Border(),
+);
 
 const _iconTheme = IconThemeData(
   color: primary

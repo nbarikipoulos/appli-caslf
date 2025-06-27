@@ -12,6 +12,7 @@ class AdminService with ChangeNotifier implements Service {
   bool _actAsClub = false;
   bool _allowRecurrentTimeSlot = false;
   bool _removeTimeLimit = false;
+  bool _isAnonymized = true;
 
   bool get isAdminMode => _isAdminMode;
   set isAdminMode (bool value) {
@@ -45,12 +46,21 @@ class AdminService with ChangeNotifier implements Service {
     }
   }
 
+  bool get isAnonymized => _isAnonymized;
+  set isAnonymized (bool value) {
+    if (_isAnonymized != value) {
+      _isAnonymized = value;
+      notifyListeners();
+    }
+  }
+
   @override
   Future init() async {
     _isAdminMode = false;
     _actAsClub = false;
     _allowRecurrentTimeSlot = false;
     _removeTimeLimit = false;
+    _isAnonymized = true;
   }
 
   // Not persisted

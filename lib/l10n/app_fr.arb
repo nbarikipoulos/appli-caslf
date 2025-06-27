@@ -18,8 +18,10 @@
   "time_slot_delete_dialog_title": "Suppression",
   "time_slot_delete_dialog_content": "Créneau au {location}.\n{day}, {time}.",
 
-  "ok" : "OK",
+  "you" : "vous",
+  "players": "archers",
 
+  "ok" : "OK",
   "confirm": "confirmer",
   "delete": "supprimer",
   "edit": "éditer",
@@ -102,6 +104,8 @@
   "screen_admin_item_recurrent_subtitle": "Permettre la création de créneaux récurrents",
   "screen_admin_item_time_limit_title": "Plus de limite de temps",
   "screen_admin_item_time_limit_subtitle": "Ne limite plus l'affichage des créneaux au mois suivant",
+  "screen_admin_item_anonymized_title": "\"Désanonymiser\" les créneaux",
+  "screen_admin_item_anonymized_subtitle": "Afficher le nom/id des participants",
 
   "screen_appearance_title": "Apparences",
   "theme_mode": "{mode, select, system{Système} light{Clair} dark{Sombre} other{---} }",

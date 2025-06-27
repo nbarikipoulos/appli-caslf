@@ -66,6 +66,19 @@ class _AdminPageState extends State<AdminPage> {
                     await TimeSlotService().toggleTimeLimitation();
                   },
                   secondary: const Icon(Icons.all_inclusive)
+                ),
+                SwitchListTile(
+                  title: Text(
+                    tr(context)!.screen_admin_item_anonymized_title
+                  ),
+                  subtitle: Text(
+                    tr(context)!.screen_admin_item_anonymized_subtitle
+                  ),
+                  value: !adminService.isAnonymized,
+                  onChanged: (bool value) {
+                    adminService.isAnonymized = !value;
+                  },
+                  secondary: const Icon(Icons.fingerprint)
                 )
               ],
             ),

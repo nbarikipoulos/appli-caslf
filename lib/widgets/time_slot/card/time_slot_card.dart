@@ -5,6 +5,7 @@ import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/models/time_slot/time_slot_status.dart';
 import 'package:caslf/models/time_slot/time_slot_type.dart';
 import 'package:caslf/router/app_router.dart';
+import 'package:caslf/services/admin_service.dart';
 import 'package:caslf/services/grant_service.dart';
 import 'package:caslf/services/preferences_service.dart';
 import 'package:caslf/services/time_slot_service.dart';
@@ -14,10 +15,11 @@ import 'package:caslf/theme/theme_utils.dart'
 import 'package:caslf/utils/day_type.dart';
 import 'package:caslf/widgets/localization.dart';
 import 'package:caslf/widgets/my_title.dart';
-import 'package:caslf/widgets/time_slot/card/details_part.dart';
+import 'package:caslf/widgets/time_slot/card/extra_details_part.dart';
 import 'package:caslf/widgets/time_slot/card/header_part.dart';
 import 'package:caslf/widgets/time_slot/time_slot_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class TimeSlotCard extends StatelessWidget implements TimeSlotWidget {
   final TimeSlot _timeSlot;
@@ -46,17 +48,9 @@ class TimeSlotCard extends StatelessWidget implements TimeSlotWidget {
       }
     ;
 
-    // Only for common timeSlot
-    final showMessage = type == TimeSlotType.common
-      && timeSlot.message != null
-    ;
-
-    final showDetails = (
-      timeSlot.ownerId != clubId
-      && timeSlot.ownerId != UserService().current.uid
-    ) || timeSlot.hasAttendees
-      || timeSlot.status == TimeSlotStatus.accepted
-    ;
+    final isAnonymized = context.select<AdminService, bool>(
+      (service) => AdminService().isAnonymized
+    );
 
     return GestureDetector(
       onLongPressStart: (value) {
@@ -71,8 +65,8 @@ class TimeSlotCard extends StatelessWidget implements TimeSlotWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Icon(
-                timeSlot.location.icon,
-                color: timeSlot.location.color,
+                location.icon,
+                color: location.color,
                 size: 48
               ),
               const SizedBox(width: 16),
@@ -83,12 +77,17 @@ class TimeSlotCard extends StatelessWidget implements TimeSlotWidget {
                     HeaderPart(
                       timeSlot: timeSlot,
                     ),
-                    if (showMessage || showDetails) Divider(
-                      color: dividerColor,
-                      thickness: 2
-                    ),
-                    if (showMessage) MyTitle(title: timeSlot.message!),
-                    if (showDetails) DetailsPart(timeSlot: timeSlot)
+                    if (_showDetails) ...[
+                      Divider(
+                        color: dividerColor,
+                        thickness: 2
+                      ),
+                      if (_displayMessage) MyTitle(title: timeSlot.message!),
+                      if (_hasAttendees) MyTitle(
+                        title: tr(context)!.attendees(timeSlot.numberOfUsers)
+                      ),
+                      if (!isAnonymized) ExtraDetailsPart(timeSlot: timeSlot)
+                    ]
                   ],
                 ),
               )
@@ -101,6 +100,25 @@ class TimeSlotCard extends StatelessWidget implements TimeSlotWidget {
 
   bool get _canBeEdited => GrantService.get().canEditTimeSlot(timeSlot);
   bool get _canBeDeleted => GrantService.get().canDeleteTimeSlot(timeSlot);
+
+  bool get _displayMessage => timeSlot.type == TimeSlotType.common
+    && timeSlot.message != null
+  ;
+  bool get _hasAttendees => timeSlot.hasAttendees;
+  bool get _showExtraDetails => !AdminService().isAnonymized
+    && (
+      _hasAttendees
+      || (
+        timeSlot.ownerId != UserService().current.uid &&
+        timeSlot.ownerId != clubId
+      )
+    )
+  ;
+
+  bool get _showDetails => _displayMessage
+    || _hasAttendees
+    || _showExtraDetails
+  ;
 
   void _showMenu(BuildContext context, Offset offset) {
     final RenderObject overlay = Overlay.of(context)
