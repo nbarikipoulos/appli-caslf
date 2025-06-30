@@ -87,11 +87,16 @@ class MessagesService extends ChangeNotifier implements Service {
       : message
     ;
 
-    return _db
-      .collection(_collectionMsgId)
-      .doc()
-      .set(msg.toFirestore())
-    ;
+    print('=======');
+    print(msg.channelId);
+    print(msg.title);
+    print(msg.body);
+    return Future.value();
+    // return _db
+    //   .collection(_collectionMsgId)
+    //   .doc()
+    //   .set(msg.toFirestore())
+    // ;
   }
 
   bool? getSubscribingFor(Channel channel) {
