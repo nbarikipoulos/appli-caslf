@@ -16,7 +16,9 @@
   "attendees": "{n, plural, zero{Aucun archer} one{1 archer attendu} other{{n} archers attendus}}",
 
   "time_slot_delete_dialog_title": "Suppression",
-  "time_slot_delete_dialog_content": "Créneau au {location}.\n{day}, {time}.",
+  "time_slot_delete_common_dialog_content": "Créneau au {location}.\n{day}, {time}.",
+  "time_slot_delete_typed_dialog_content": "{type} : {message}.\n{day}, {time}.",
+  "time_slot_delete_dialog_send_message": "Envoyer une notification",
 
   "you" : "vous",
   "players": "archers",
@@ -158,6 +160,17 @@
 
   "message_new_timeslots_title": "Nouveaux créneaux au {location}",
   "message_new_timeslots_body": "Les {days} du {date_begin} au {date_end}, {schedule}.",
+
+  "message_deleted_common_timeslot_title": "Créneau supprimé {date} au {location}",
+  "message_deleted_event_timeslot_title" : "Événement annulé {date}",
+  "message_deleted_competition_timeslot_title" : "Compétition annulée {date}",
+  "message_deleted_maintenance_timeslot_title" : "Travaux annulés {date}",
+  "message_deleted_closed_timeslot_title" : "Fermeture du {location} annulée {date}",
+
+  "message_deleted_common_timeslot_body": "Heure: {schedule}",
+  "message_deleted_with_desc_timeslot_body": "{label}",
+  "message_deleted_maintenance_timeslot_body" : "Lieu: {location}",
+  "message_deleted_closed_timeslot_body" : "À vos arcs!",
 
   "message_updated_common_timeslot_title": "Modification: {date} au {location}",
   "message_updated_typed_timeslot_title": "Modification: {date} ({type})",
