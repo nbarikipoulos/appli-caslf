@@ -74,12 +74,14 @@ class _ExtraDetailsPartState extends State<ExtraDetailsPart> {
                   minTileHeight: 0,
                   childrenPadding: EdgeInsets.fromLTRB(12, 0, 0, 0),
                   expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
-                  title: Text(tr(context)!.players),
+                  title: Text(
+                    tr(context)!.players.toCapitalized
+                  ),
                   children: _attendeeUids.map( (uid) =>
                     Selector<UserService, String?>(
                       selector: selector(uid),
                       builder: (context, name, __) => MyTitle(
-                        title: _toName(name, uid)
+                        title: '- ${_toName(name, uid)}'
                       )
                     )
                   ).toList()
