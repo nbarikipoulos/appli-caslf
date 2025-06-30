@@ -94,58 +94,6 @@ class TimeSlotMessageBuilder {
     );
   }
 
-  Message deleted() {
-    String title;
-    String body;
-
-    // title
-
-    title = switch(_timeSlot.type) {
-      TimeSlotType.common =>
-        _localisation.message_deleted_common_timeslot_title(
-          _dateLabel,
-          _locationLabel
-        ),
-      TimeSlotType.event =>
-        _localisation.message_deleted_event_timeslot_title(_dateLabel),
-      TimeSlotType.competition =>
-        _localisation.message_deleted_competition_timeslot_title(_dateLabel),
-      TimeSlotType.maintenance =>
-        _localisation.message_deleted_maintenance_timeslot_title(_dateLabel),
-      TimeSlotType.closed =>
-        _localisation.message_deleted_closed_timeslot_title(
-          _dateLabel,
-          _locationLabel
-        ),
-      (_) => throw UnimplementedError() // could not happen
-    };
-
-    // body
-
-    body = switch(_timeSlot.type) {
-      TimeSlotType.common =>
-        _localisation.message_deleted_common_timeslot_body(
-          _scheduleLabel
-        ),
-      TimeSlotType.competition ||
-      TimeSlotType.event =>
-        _localisation.message_deleted_with_desc_timeslot_body(
-          _timeSlot.message!.toCapitalized
-        ),
-      TimeSlotType.maintenance =>
-        _localisation.message_deleted_maintenance_timeslot_body(_locationLabel),
-      TimeSlotType.closed =>
-        _localisation.message_deleted_closed_timeslot_body,
-      TimeSlotType.unknown => throw UnimplementedError() // could not happen
-    };
-
-    return Message.create(
-      channelId: _channelId(ChannelType.newSlot),
-      title: title,
-      body: body
-    );
-  }
-
   Message _askFor() {
     String title;
     String body;

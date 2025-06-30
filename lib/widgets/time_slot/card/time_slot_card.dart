@@ -1,14 +1,11 @@
 import 'package:caslf/extensions/string_ext.dart';
 import 'package:caslf/extensions/time_slot/time_slot_ext.dart';
-import 'package:caslf/messages/time_slot_message.dart';
-import 'package:caslf/models/message/message.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/models/time_slot/time_slot_status.dart';
 import 'package:caslf/models/time_slot/time_slot_type.dart';
 import 'package:caslf/router/app_router.dart';
 import 'package:caslf/services/admin_service.dart';
 import 'package:caslf/services/grant_service.dart';
-import 'package:caslf/services/messages_service.dart';
 import 'package:caslf/services/preferences_service.dart';
 import 'package:caslf/services/time_slot_service.dart';
 import 'package:caslf/services/user_service.dart';
@@ -22,11 +19,6 @@ import 'package:caslf/widgets/time_slot/card/header_part.dart';
 import 'package:caslf/widgets/time_slot/time_slot_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-typedef DeletionAnswer = ({
-  bool perform,
-  bool sendMessage,
-});
 
 class TimeSlotCard extends StatelessWidget implements TimeSlotWidget {
   final TimeSlot _timeSlot;
@@ -158,18 +150,10 @@ class TimeSlotCard extends StatelessWidget implements TimeSlotWidget {
           onTap: () => (
             PreferencesService().confirmTimeSlotDeletion
               ? _dialogBuilder(context)
-              : Future.value((perform: true, sendMessage: true))
-            ).then( (DeletionAnswer? answer) {
-              answer ??= (perform:false, sendMessage:false);
-              if (answer.perform) {
+              : Future.value(true)
+            ).then( (bool? perform) {
+              if (perform ?? false) {
                 TimeSlotService().delete(timeSlot);
-                if (answer.sendMessage) {
-                  Message message = TimeSlotMessageBuilder(
-                    context: context,
-                    timeSlot: _timeSlot
-                  ).deleted();
-                  MessagesService().send(message);
-                }
               }
             })
         )
@@ -191,79 +175,35 @@ class TimeSlotCard extends StatelessWidget implements TimeSlotWidget {
     );
   }
 
-  Future<DeletionAnswer?> _dialogBuilder(BuildContext context) {
+  Future<bool?> _dialogBuilder(BuildContext context) {
     final title = tr(context)!.time_slot_delete_dialog_title;
 
-    final dayLabel = dayDateLabel(context, timeSlot.date).toCapitalized;
-    final locationLabel = tr(context)!.location(timeSlot.location.name);
-    final timeRange = timeRangeLabel(context, timeSlot);
-    final typeLabel = tr(context)!.time_slot_type(timeSlot.type.name);
+    final content = tr(context)!.time_slot_delete_dialog_content(
+      dayDateLabel(context, timeSlot.date).toCapitalized,
+      tr(context)!.location(timeSlot.location.name),
+      timeRangeLabel(context, timeSlot)
+    );
 
-    final content = switch(timeSlot.type) {
-      TimeSlotType.common => tr(context)!.time_slot_delete_common_dialog_content(
-        dayLabel,
-        locationLabel,
-        timeRange
-      ),
-      (_) => tr(context)!.time_slot_delete_typed_dialog_content(
-        dayLabel,
-        (timeSlot.message ?? locationLabel),
-        timeRange,
-        typeLabel.toCapitalized
-      )
-    };
-
-    return showDialog<DeletionAnswer>(
+    return showDialog<bool>(
       context: context,
-      builder: (BuildContext context) {
-        bool sendMessage = true;
-        return AlertDialog(
-          title: Text(title, style: TextStyle(color: primary)),
-          content: StatefulBuilder(
-          builder: (
-            BuildContext context,
-            StateSetter setState
-          ) => Wrap(
-            children: [
-              ListTile(
-                title: Text(content),
-              ),
-              CheckboxListTile(
-                title: Text(
-                  tr(context)!.time_slot_delete_dialog_send_message
-                ),
-                value: sendMessage,
-                onChanged: (value) {
-                  setState(() {
-                    sendMessage = value ?? false;
-                  });
-                })
-              ]
-            )
+      builder: (BuildContext context) => AlertDialog(
+        title: Text(title, style: TextStyle(color: primary)),
+        content: Text(content),
+        actions: [
+          TextButton(
+            child: Text(tr(context)!.cancel),
+            onPressed: () {
+              Navigator.pop(context, false);
+            }
           ),
-          // Text(content),
-          actions: [
-            TextButton(
-              child: Text(tr(context)!.cancel),
-              onPressed: () {
-                Navigator.pop(
-                  context,
-                  (perform: false, sendMessage: false)
-                );
-              }
-            ),
-            TextButton(
-              child: Text(tr(context)!.delete),
-              onPressed: () {
-                Navigator.pop(
-                  context,
-                  (perform: true, sendMessage: sendMessage)
-                );
-              }
-            )
-          ]
-        );
-      }
+          TextButton(
+            child: Text(tr(context)!.delete),
+            onPressed: () {
+              Navigator.pop(context, true);
+            }
+          )
+         ]
+      )
     );
   }
 }
