@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserData {
   final String uid;
-  String displayName;
+  String? displayName;
   final UserGrant? grant;
 
   bool hasAccessTo(Location location) =>
@@ -24,7 +24,7 @@ class UserData {
     UserGrant? grant
   }) => UserData._(
     uid: uid,
-    displayName: displayName ?? '---',
+    displayName: displayName,
     grant: grant
   );
 
