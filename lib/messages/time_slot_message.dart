@@ -11,6 +11,7 @@ import 'package:caslf/models/message/message.dart';
 import 'package:caslf/models/time_slot/time_slot.dart';
 import 'package:caslf/models/time_slot/time_slot_status.dart';
 import 'package:caslf/models/time_slot/time_slot_type.dart';
+import 'package:caslf/services/user_service.dart';
 import 'package:caslf/utils/day.dart';
 import 'package:caslf/utils/day_type.dart';
 import 'package:caslf/widgets/localization.dart';
@@ -87,7 +88,7 @@ class TimeSlotMessageBuilder {
       _scheduleLabel
     );
 
-    return Message.create(
+    return _message(
       channelId: _channelId(ChannelType.newSlot),
       title: title,
       body: body
@@ -139,7 +140,7 @@ class TimeSlotMessageBuilder {
       TimeSlotType.unknown => throw UnimplementedError() // could not happen
     };
 
-    return Message.create(
+    return _message(
       channelId: _channelId(ChannelType.newSlot),
       title: title,
       body: body
@@ -159,7 +160,7 @@ class TimeSlotMessageBuilder {
       _scheduleLabel
     );
 
-    return Message.create(
+    return _message(
       channelId: _channelId(ChannelType.askFor),
       title: title,
       body: body
@@ -210,7 +211,7 @@ class TimeSlotMessageBuilder {
       TimeSlotType.unknown => throw UnimplementedError() // could not happen
     };
 
-    return Message.create(
+    return _message(
       channelId: _channelId(ChannelType.newSlot),
       title: title,
       body: body
@@ -257,7 +258,7 @@ class TimeSlotMessageBuilder {
       scheduleLabelOld
     );
 
-    return Message.create(
+    return _message(
       channelId: _channelId(ChannelType.newSlot),
       title: title,
       body: body
@@ -285,7 +286,7 @@ class TimeSlotMessageBuilder {
       scheduleLabelOld
     );
 
-    return Message.create(
+    return _message(
       channelId: _channelId(ChannelType.askFor),
       title: title,
       body: body
@@ -311,10 +312,21 @@ class TimeSlotMessageBuilder {
       LocationAction.close => _localisation.message_close_body
     };
 
-    return Message.create(
+    return _message(
       channelId: _channelId(ChannelType.openClose),
       title: title,
       body: body
     );
   }
+
+  Message _message({
+    required String channelId,
+    required String title,
+    required String body
+  }) => Message.create(
+    uid: UserService().current.uid,
+    channelId: channelId,
+    title: title,
+    body: body
+  );
 }
