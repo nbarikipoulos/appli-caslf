@@ -125,8 +125,8 @@ class _TimeSlotListViewState extends State<TimeSlotListView> {
     } else { // Then check for today and tomorrow (always displayed)
       for (var day in [today, tomorrow]) {
         result.addAll(f(day));
-        if (iterable.first == day) { //Move to next
-          iterable = iterable.skip(1);
+        if (iterable.isNotEmpty && iterable.first == day) { // Move to next
+          iterable = iterable.skip(1); // then it could be empty once again
         }
       }
     }
@@ -139,5 +139,4 @@ class _TimeSlotListViewState extends State<TimeSlotListView> {
 
     return result;
   }
-
 }
